@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Level\GameManager.cs" />
     <Compile Include="Assets\Scripts\Level\Platform.cs" />
+    <Compile Include="Assets\Scripts\Level\ScrollingEntity.cs" />
     <Compile Include="Assets\Scripts\Level\ScrollingImage.cs" />
     <Compile Include="Assets\Scripts\Others\AutoDestroyParticleSystem.cs" />
     <Compile Include="Assets\Scripts\Others\TextureTilingController.cs" />

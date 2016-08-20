@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Platform : MonoBehaviour
+public class ScrollingEntity : MonoBehaviour
 {
-
     [SerializeField] Transform m_endEntity;
     [SerializeField] Transform m_unspawnEntity;
-    [SerializeField] int widthSize;
-    [SerializeField] int m_pointGived;
+    [SerializeField] Transform m_spawnEntity;
 
     float m_speedTranslate;
     bool m_isPaused;
@@ -23,10 +21,12 @@ public class Platform : MonoBehaviour
     {
         if (!m_isPaused)
         {
+
             if (m_endEntity.position.x <= m_unspawnEntity.position.x)
             {
-                Debug.Log("destroy platform");
-                Destroy(gameObject);
+                Debug.Log(gameObject.name + " : x = " + m_endEntity.position.x + ", x unspawn = " + m_unspawnEntity.position.x);
+                transform.position = m_spawnEntity.position - new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0);
+                Debug.Log(gameObject.name + " pos after : x = " + transform.position.ToString() + ", sous = " + (Mathf.Abs(m_endEntity.position.x) - 20));
             }
             transform.Translate(new Vector3(-m_speedTranslate * Time.deltaTime, 0, 0));
         }
@@ -48,22 +48,6 @@ public class Platform : MonoBehaviour
 
     }
 
-    public int WidthSize
-    {
-        get
-        {
-            return widthSize;
-        }
-    }
-
-    public int PointGived
-    {
-        get
-        {
-            return m_pointGived;
-        }
-    }
-
     public float Speed
     {
         get
@@ -76,8 +60,7 @@ public class Platform : MonoBehaviour
             m_speedTranslate = value;
         }
     }
-
-    public void initPlatform(float newSpeed)
+    public void initEntity(float newSpeed)
     {
         m_speedTranslate = newSpeed;
     }

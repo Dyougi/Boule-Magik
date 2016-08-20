@@ -3,56 +3,60 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+
 public class GameManager : MonoBehaviour {
 
     [SerializeField] GameObject[] m_platformsGO;
     [SerializeField] float m_timeBetweenPlatform;
-    [SerializeField] ScrollingImage m_background;
-    [SerializeField] ScrollingImage m_floor;
+    [SerializeField] float m_startSpeedScroll;
+    [SerializeField] float m_updateSpeedScroll;
+    [SerializeField] GameObject m_firstBackground;
+    [SerializeField] GameObject m_secondBackground;
+    [SerializeField] GameObject m_firstFloor;
+    [SerializeField] GameObject m_secondFloor;
     [SerializeField] GameObject m_player;
     [SerializeField] Transform m_spawnPlatform;
     [SerializeField] GameObject m_deathParticleSystem;
     [SerializeField] Text m_uiPoint;
-    [SerializeField] bool test;
 
     List<GameObject> m_platformTab;
     GameObject currentPlatform;
+    Time m_saveAccelerationTranslate;
     int m_points;
+    float m_speedScroll;
     int m_countTab;
     bool m_isPaused;
     bool m_isLose;
-
 
     bool isPlatformInstance;
 
     // UNITY METHODES
 
-	void Start () {
+    void Start () {
         m_platformTab = new List<GameObject>();
         initGame();
     }
 	
 	void Update () {
         manageInput();
-        if (test && !Pause)
-        {  
+        if (!Pause)
+        {
+            if (currentPlatform == null)
+            {
+                Debug.Log("ping currentPlatform null");
+                isPlatformInstance = false;
+            }
             if (!isPlatformInstance)
             {
                 m_countTab = Random.Range(0, m_platformsGO.Length);
                 currentPlatform = Instantiate(m_platformsGO[m_countTab], m_spawnPlatform.position, Quaternion.identity) as GameObject;
-                currentPlatform.GetComponent<Platform>().InitPlatform(4f);
+                currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll);
                 m_platformTab.Add(currentPlatform);
                 updatePoint(currentPlatform.GetComponent<Platform>().PointGived);
                 isPlatformInstance = true;
+                updateSpeedScroll(m_updateSpeedScroll);
             }
-            else
-            {
-                if (currentPlatform == null)
-                {
-                    Debug.Log("ping currentPlatform null");
-                    isPlatformInstance = false;
-                }
-            }
+            
         }
     }
 
@@ -65,8 +69,13 @@ public class GameManager : MonoBehaviour {
         m_isLose = false;
         m_points = 0;
         currentPlatform = null;
-        isPlatformInstance = false;
+        updateSpeedScroll(m_startSpeedScroll);
         updatePoint(m_points);
+        m_firstFloor.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll);
+        m_secondFloor.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll);
+        m_firstBackground.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll);
+        m_secondBackground.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll);
+        m_speedScroll = m_startSpeedScroll;
     }
 
     void manageInput()
@@ -104,6 +113,17 @@ public class GameManager : MonoBehaviour {
         m_uiPoint.text = m_points.ToString();
     }
 
+    public void updateSpeedScroll(float newSpeed)
+    {
+        m_speedScroll += newSpeed;
+        foreach (GameObject obj in m_platformTab)
+            if (obj != null)
+                obj.GetComponent<Platform>().Speed = m_speedScroll;
+        m_firstBackground.GetComponent<ScrollingEntity>().Speed = m_speedScroll;
+        m_secondBackground.GetComponent<ScrollingEntity>().Speed = m_speedScroll;
+        m_firstFloor.GetComponent<ScrollingEntity>().Speed = m_speedScroll;
+        m_secondFloor.GetComponent<ScrollingEntity>().Speed = m_speedScroll;
+    }
 
     public void pause(bool pause)
     {
@@ -111,8 +131,10 @@ public class GameManager : MonoBehaviour {
             if (obj != null)
                 obj.GetComponent<Platform>().Pause = pause;
         m_player.GetComponent<PlayerController>().Pause = pause;
-        m_background.Pause = pause;
-        m_floor.Pause = pause;
+        m_firstBackground.GetComponent<ScrollingEntity>().Pause = pause;
+        m_secondBackground.GetComponent<ScrollingEntity>().Pause = pause;
+        m_firstFloor.GetComponent<ScrollingEntity>().Pause = pause;
+        m_secondFloor.GetComponent<ScrollingEntity>().Pause = pause;
         Pause = pause;
     }
 
