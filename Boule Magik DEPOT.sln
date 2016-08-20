@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boule Magik DEPOT.CSharp.Plugins", "Boule Magik DEPOT.CSharp.Plugins.csproj", "{BC7FFA6B-33DE-7A1A-A027-4F044EF0F392}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boule Magik DEPOT.CSharp", "Boule Magik DEPOT.CSharp.csproj", "{0E5BD8BD-9A05-D838-4A6C-18FDEC3206DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boule Magik DEPOT.CSharp.Editor", "Boule Magik DEPOT.CSharp.Editor.csproj", "{CCCAFA13-AF22-7ADD-274F-8C894DD4CF9A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC7FFA6B-33DE-7A1A-A027-4F044EF0F392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC7FFA6B-33DE-7A1A-A027-4F044EF0F392}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC7FFA6B-33DE-7A1A-A027-4F044EF0F392}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC7FFA6B-33DE-7A1A-A027-4F044EF0F392}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E5BD8BD-9A05-D838-4A6C-18FDEC3206DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E5BD8BD-9A05-D838-4A6C-18FDEC3206DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E5BD8BD-9A05-D838-4A6C-18FDEC3206DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E5BD8BD-9A05-D838-4A6C-18FDEC3206DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCAFA13-AF22-7ADD-274F-8C894DD4CF9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCAFA13-AF22-7ADD-274F-8C894DD4CF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCAFA13-AF22-7ADD-274F-8C894DD4CF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCAFA13-AF22-7ADD-274F-8C894DD4CF9A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
