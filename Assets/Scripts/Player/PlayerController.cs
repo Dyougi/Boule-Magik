@@ -3,11 +3,13 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
-    [SerializeField] float m_startVelocityY;
-    [SerializeField] float m_smoothFactor;
-    [SerializeField] Transform m_playerLimit;
+    [SerializeField] AudioClip m_jumpSound; // jump sound !
+    [SerializeField] float m_startVelocityY; // the start velocity for y axe (jump)
+    [SerializeField] float m_smoothFactor; // the smooth factor for the positive moving of the player on the positive axe x
+    [SerializeField] Transform m_playerLimit; // the position of the limit of where the player can go
 
 
+    AudioSource m_managerAudio;
     Rigidbody2D m_rigidbody;
     float m_velocityY;
     bool m_canDoubleJump;
@@ -19,6 +21,7 @@ public class PlayerController : MonoBehaviour {
 
     void Start () {
         m_rigidbody = GetComponent<Rigidbody2D>();
+        m_managerAudio = GetComponent<AudioSource>();
         m_velocityY = m_startVelocityY;
         m_canDoubleJump = true;
         m_savePosition = transform.position;
@@ -66,11 +69,13 @@ public class PlayerController : MonoBehaviour {
     {
         if (m_rigidbody.velocity.y == 0)
         {
+            m_managerAudio.PlayOneShot(m_jumpSound);
             m_rigidbody.AddForce(new Vector2(0, m_velocityY));
         }
         else if (m_rigidbody.velocity.y > -5 && m_canDoubleJump == true)
         {
             m_canDoubleJump = false;
+            m_managerAudio.PlayOneShot(m_jumpSound);
             m_rigidbody.AddForce(new Vector2(0, m_velocityY));
         }
     }

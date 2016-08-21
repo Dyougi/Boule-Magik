@@ -12,12 +12,16 @@ public class GameManager : MonoBehaviour {
     [SerializeField] float m_updateSpeedScroll; // the speed added at each tick
     [SerializeField] GameObject m_firstBackground; // first background
     [SerializeField] GameObject m_secondBackground; // second background
-    [SerializeField] GameObject m_firstFloor; // first floor 
-    [SerializeField] GameObject m_secondFloor; // yu got it I guess ?
+    [SerializeField] GameObject m_firstFloor; // first floor
+    [SerializeField] GameObject m_secondFloor; // second floor
     [SerializeField] GameObject m_player; // GO of the player
     [SerializeField] Transform m_spawnPlatform; // the position of where platform are instanciated
     [SerializeField] GameObject m_deathParticleSystem; // the GO with the particle system played when player is dead
     [SerializeField] Text m_uiPoint; // the Text from the GUI to show points
+    [SerializeField] AudioSource m_musicManager; // audio source for music
+    [SerializeField] AudioSource m_soundManager; // audio source for sound
+    [SerializeField] AudioClip m_musicDefault; // the Text from the GUI to show points
+    [SerializeField] AudioClip m_loseSound; // the Text from the GUI to show points
 
     List<GameObject> m_platformTab; // list of platforms instanciated
     GameObject currentPlatform; // the current platform handled
@@ -27,7 +31,7 @@ public class GameManager : MonoBehaviour {
     float m_sizePlatformSave; // variable to save the size of the last platform instanciated
     int m_countTab; // count set randomly to instance a random platform
     bool m_isPaused; // is game paused ?
-    bool m_isLose; // is the game lost ? (omg no)
+    bool m_isLose; // is the game lost ?
 
     bool isPlatformInstance;
 
@@ -35,6 +39,8 @@ public class GameManager : MonoBehaviour {
 
     void Start () {
         m_platformTab = new List<GameObject>();
+        m_musicManager.clip = m_musicDefault;
+        m_musicManager.Play();
         initGame();
     }
 	
@@ -81,11 +87,9 @@ public class GameManager : MonoBehaviour {
     {
         if (Input.GetButton("Submit"))
         {
-            Debug.Log("Submit");
             if (m_isLose)
             {
                 restartGame();
-                Debug.Log("restartGame");
             }
         }
     }
@@ -141,6 +145,9 @@ public class GameManager : MonoBehaviour {
     {
         pause(true);
         m_isLose = true;
+        m_soundManager.clip = m_loseSound;
+        m_soundManager.Play();
+        m_musicManager.Stop();
         Instantiate(m_deathParticleSystem, m_player.transform.position, m_deathParticleSystem.transform.rotation);
     }
 
