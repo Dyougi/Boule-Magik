@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
         if (!m_isPaused)
         {
-            ManageInputs();
+            manageInputs();
             if (m_canDoubleJump == false && m_rigidbody.velocity.y == 0)
                 m_canDoubleJump = true;
 
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour {
 
     // PRIVATE METHODES
 
-    void ManageInputs()
+    void manageInputs()
     {
         if (Input.GetButtonDown("Jump"))
         {

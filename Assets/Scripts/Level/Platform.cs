@@ -25,7 +25,7 @@ public class Platform : MonoBehaviour
         {
             if (m_endEntity.position.x <= m_unspawnEntity.position.x)
             {
-                Debug.Log("destroy platform");
+                GameObject.Find("GameManager").GetComponent<GameManager>().updatePoint(PointGived);
                 Destroy(gameObject);
             }
             transform.Translate(new Vector3(-m_speedTranslate * Time.deltaTime, 0, 0));

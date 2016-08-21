@@ -6,27 +6,28 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 
-    [SerializeField] GameObject[] m_platformsGO;
-    [SerializeField] float m_timeBetweenPlatform;
-    [SerializeField] float m_startSpeedScroll;
-    [SerializeField] float m_updateSpeedScroll;
-    [SerializeField] GameObject m_firstBackground;
-    [SerializeField] GameObject m_secondBackground;
-    [SerializeField] GameObject m_firstFloor;
-    [SerializeField] GameObject m_secondFloor;
-    [SerializeField] GameObject m_player;
-    [SerializeField] Transform m_spawnPlatform;
-    [SerializeField] GameObject m_deathParticleSystem;
-    [SerializeField] Text m_uiPoint;
+    [SerializeField] GameObject[] m_platformsGO; // tab for all platforms
+    [SerializeField] float m_spaceBetweenPlatform; // space between platform
+    [SerializeField] float m_startSpeedScroll; // the default speed of the level translate
+    [SerializeField] float m_updateSpeedScroll; // the speed added at each tick
+    [SerializeField] GameObject m_firstBackground; // first background
+    [SerializeField] GameObject m_secondBackground; // second background
+    [SerializeField] GameObject m_firstFloor; // first floor 
+    [SerializeField] GameObject m_secondFloor; // yu got it I guess ?
+    [SerializeField] GameObject m_player; // GO of the player
+    [SerializeField] Transform m_spawnPlatform; // the position of where platform are instanciated
+    [SerializeField] GameObject m_deathParticleSystem; // the GO with the particle system played when player is dead
+    [SerializeField] Text m_uiPoint; // the Text from the GUI to show points
 
-    List<GameObject> m_platformTab;
-    GameObject currentPlatform;
-    Time m_saveAccelerationTranslate;
-    int m_points;
-    float m_speedScroll;
-    int m_countTab;
-    bool m_isPaused;
-    bool m_isLose;
+    List<GameObject> m_platformTab; // list of platforms instanciated
+    GameObject currentPlatform; // the current platform handled
+    int m_points; // current points of the player
+    float m_speedScroll; // the current speed of the level translate
+    float m_timeBetweenTwoInstancePlatform; // variable to save the time passed to know when to make another instance of a new platform
+    float m_sizePlatformSave; // variable to save the size of the last platform instanciated
+    int m_countTab; // count set randomly to instance a random platform
+    bool m_isPaused; // is game paused ?
+    bool m_isLose; // is the game lost ? (omg no)
 
     bool isPlatformInstance;
 
@@ -37,26 +38,22 @@ public class GameManager : MonoBehaviour {
         initGame();
     }
 	
-	void Update () {
+	void FixedUpdate () {
         manageInput();
         if (!Pause)
         {
-            if (currentPlatform == null)
+            if (m_sizePlatformSave <= (m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform))
             {
-                Debug.Log("ping currentPlatform null");
-                isPlatformInstance = false;
-            }
-            if (!isPlatformInstance)
-            {
+                m_timeBetweenTwoInstancePlatform = 0;
                 m_countTab = Random.Range(0, m_platformsGO.Length);
                 currentPlatform = Instantiate(m_platformsGO[m_countTab], m_spawnPlatform.position, Quaternion.identity) as GameObject;
                 currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll);
+                m_sizePlatformSave = currentPlatform.GetComponent<Platform>().WidthSize;
                 m_platformTab.Add(currentPlatform);
-                updatePoint(currentPlatform.GetComponent<Platform>().PointGived);
                 isPlatformInstance = true;
                 updateSpeedScroll(m_updateSpeedScroll);
             }
-            
+            m_timeBetweenTwoInstancePlatform += Time.deltaTime * m_speedScroll;
         }
     }
 
@@ -64,23 +61,25 @@ public class GameManager : MonoBehaviour {
 
     void initGame()
     {
-        m_countTab = 0;
-        m_isPaused = false;
-        m_isLose = false;
-        m_points = 0;
-        currentPlatform = null;
-        updateSpeedScroll(m_startSpeedScroll);
-        updatePoint(m_points);
-        m_firstFloor.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll);
-        m_secondFloor.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll);
-        m_firstBackground.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll);
-        m_secondBackground.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll);
-        m_speedScroll = m_startSpeedScroll;
+        m_countTab = 0; // tab platform count;
+        m_isPaused = false; // game paused ?
+        m_isLose = false; // lose state
+        m_points = 0; // point number
+        currentPlatform = null; // instance variable for current platform
+        updateSpeedScroll(m_startSpeedScroll); // set default speed scroll
+        updatePoint(m_points); // set default point
+        m_firstFloor.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll); // set default speed for level transtaltion
+        m_secondFloor.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll); // set default speed for level transtaltion
+        m_firstBackground.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll); // set default speed for level transtaltion
+        m_secondBackground.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll); // set default speed for level transtaltion
+        m_speedScroll = m_startSpeedScroll; // set default speed for level transtaltion
+        m_timeBetweenTwoInstancePlatform = 0; // set the default value for the time passed between two instance of platform
+        m_sizePlatformSave = m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform; // set default value for variable of the save of size of current platform
     }
 
     void manageInput()
     {
-        if (Input.GetButtonDown("Submit"))
+        if (Input.GetButton("Submit"))
         {
             Debug.Log("Submit");
             if (m_isLose)

@@ -24,9 +24,7 @@ public class ScrollingEntity : MonoBehaviour
 
             if (m_endEntity.position.x <= m_unspawnEntity.position.x)
             {
-                Debug.Log(gameObject.name + " : x = " + m_endEntity.position.x + ", x unspawn = " + m_unspawnEntity.position.x);
                 transform.position = m_spawnEntity.position - new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0);
-                Debug.Log(gameObject.name + " pos after : x = " + transform.position.ToString() + ", sous = " + (Mathf.Abs(m_endEntity.position.x) - 20));
             }
             transform.Translate(new Vector3(-m_speedTranslate * Time.deltaTime, 0, 0));
         }
