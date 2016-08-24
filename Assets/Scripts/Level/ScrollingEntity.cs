@@ -17,7 +17,7 @@ public class ScrollingEntity : MonoBehaviour
         m_isPaused = false;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if (!m_isPaused)
         {

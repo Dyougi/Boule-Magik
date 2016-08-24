@@ -19,7 +19,7 @@ public class Platform : MonoBehaviour
         m_isPaused = false;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if (!m_isPaused)
         {

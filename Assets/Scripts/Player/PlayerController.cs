@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class PlayerController : MonoBehaviour {
 
@@ -10,11 +11,13 @@ public class PlayerController : MonoBehaviour {
 
 
     AudioSource m_managerAudio;
+    Transform m_bouleMagikMesh;
     Rigidbody2D m_rigidbody;
     float m_velocityY;
     bool m_canDoubleJump;
     Vector2 m_savePosition;
     float m_savePosX;
+    float m_speedScroll;
     bool m_isPaused;
 
     // UNITY METHODES
@@ -25,21 +28,24 @@ public class PlayerController : MonoBehaviour {
         m_velocityY = m_startVelocityY;
         m_canDoubleJump = true;
         m_savePosition = transform.position;
+        Transform[] tabTransform =  GetComponentsInChildren<Transform>();
+        m_bouleMagikMesh = tabTransform[1];
     }
-	
+
 	void Update () {
         if (!m_isPaused)
         {
             manageInputs();
             if (m_canDoubleJump == false && m_rigidbody.velocity.y == 0)
                 m_canDoubleJump = true;
-
             //Avance auto du joueur
             if (transform.position.x < m_playerLimit.position.x && transform.position.x == m_savePosX)
             {
                 transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);
+                m_bouleMagikMesh.Rotate(new Vector3(0, 0, -(90 * m_speedScroll * Time.deltaTime)));
             }
             m_savePosX = transform.position.x;
+            
         }
     }
 
@@ -55,10 +61,12 @@ public class PlayerController : MonoBehaviour {
 
     void manageInputs()
     {
+
         if (Input.GetButtonDown("Jump"))
         {
             doJump();
         }
+        
         if (Input.GetButton("Power"))
         {
 
@@ -72,12 +80,13 @@ public class PlayerController : MonoBehaviour {
             m_managerAudio.PlayOneShot(m_jumpSound);
             m_rigidbody.AddForce(new Vector2(0, m_velocityY));
         }
-        else if (m_rigidbody.velocity.y > -5 && m_canDoubleJump == true)
-        {
-            m_canDoubleJump = false;
-            m_managerAudio.PlayOneShot(m_jumpSound);
-            m_rigidbody.AddForce(new Vector2(0, m_velocityY));
-        }
+        else
+            if (m_rigidbody.velocity.y > -5 && m_canDoubleJump)
+            {
+                m_canDoubleJump = false;
+                m_managerAudio.PlayOneShot(m_jumpSound);
+                m_rigidbody.AddForce(new Vector2(0, m_velocityY));
+            }
     }
 
     // PUBLIC METHODES
@@ -99,5 +108,18 @@ public class PlayerController : MonoBehaviour {
             m_isPaused = value;
         }
 
+    }
+
+    public float Speed
+    {
+        get
+        {
+            return m_speedScroll;
+        }
+
+        set
+        {
+            m_speedScroll = value;
+        }
     }
 }

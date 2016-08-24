@@ -22,8 +22,11 @@ public class GameManager : MonoBehaviour {
     [SerializeField] AudioSource m_soundManager; // audio source for sound
     [SerializeField] AudioClip m_musicDefault; // the Text from the GUI to show points
     [SerializeField] AudioClip m_loseSound; // the Text from the GUI to show points
+    [SerializeField] bool m_test; // the Text from the GUI to show points
 
     List<GameObject> m_platformTab; // list of platforms instanciated
+
+
     GameObject currentPlatform; // the current platform handled
     int m_points; // current points of the player
     float m_speedScroll; // the current speed of the level translate
@@ -32,8 +35,6 @@ public class GameManager : MonoBehaviour {
     int m_countTab; // count set randomly to instance a random platform
     bool m_isPaused; // is game paused ?
     bool m_isLose; // is the game lost ?
-
-    bool isPlatformInstance;
 
     // UNITY METHODES
 
@@ -44,9 +45,9 @@ public class GameManager : MonoBehaviour {
         initGame();
     }
 	
-	void FixedUpdate () {
+	void Update () {
         manageInput();
-        if (!Pause)
+        if (!Pause && !m_test)
         {
             if (m_sizePlatformSave <= (m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform))
             {
@@ -56,7 +57,6 @@ public class GameManager : MonoBehaviour {
                 currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll);
                 m_sizePlatformSave = currentPlatform.GetComponent<Platform>().WidthSize;
                 m_platformTab.Add(currentPlatform);
-                isPlatformInstance = true;
                 updateSpeedScroll(m_updateSpeedScroll);
             }
             m_timeBetweenTwoInstancePlatform += Time.deltaTime * m_speedScroll;
@@ -122,6 +122,7 @@ public class GameManager : MonoBehaviour {
         foreach (GameObject obj in m_platformTab)
             if (obj != null)
                 obj.GetComponent<Platform>().Speed = m_speedScroll;
+        m_player.GetComponent<PlayerController>().Speed = m_speedScroll;
         m_firstBackground.GetComponent<ScrollingEntity>().Speed = m_speedScroll;
         m_secondBackground.GetComponent<ScrollingEntity>().Speed = m_speedScroll;
         m_firstFloor.GetComponent<ScrollingEntity>().Speed = m_speedScroll;
@@ -157,6 +158,7 @@ public class GameManager : MonoBehaviour {
             Destroy(obj);
         m_player.GetComponent<PlayerController>().resetPlayer();
         initGame();
+        m_musicManager.Play();
         pause(false);
     }
 }
