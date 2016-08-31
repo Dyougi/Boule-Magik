@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour {
 
     [SerializeField] GameObject[] m_platformsGO; // tab for all platforms
+    [Range(0,100)][SerializeField] int m_chanceBonus;
     [SerializeField] float m_spaceBetweenPlatform; // space between platform
     [SerializeField] float m_startSpeedScroll; // the default speed of the level translate
     [SerializeField] float m_updateSpeedScroll; // the speed added at each tick
@@ -24,9 +25,9 @@ public class GameManager : MonoBehaviour {
     [SerializeField] AudioClip m_loseSound; // the Text from the GUI to show points
     [SerializeField] bool m_test; // the Text from the GUI to show points
 
+    public enum e_bonusType { SPEED }
+
     List<GameObject> m_platformTab; // list of platforms instanciated
-
-
     GameObject currentPlatform; // the current platform handled
     int m_points; // current points of the player
     float m_speedScroll; // the current speed of the level translate
@@ -54,7 +55,7 @@ public class GameManager : MonoBehaviour {
                 m_timeBetweenTwoInstancePlatform = 0;
                 m_countTab = Random.Range(0, m_platformsGO.Length);
                 currentPlatform = Instantiate(m_platformsGO[m_countTab], m_spawnPlatform.position, Quaternion.identity) as GameObject;
-                currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll);
+                currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll, m_chanceBonus);
                 m_sizePlatformSave = currentPlatform.GetComponent<Platform>().WidthSize;
                 m_platformTab.Add(currentPlatform);
                 updateSpeedScroll(m_updateSpeedScroll);

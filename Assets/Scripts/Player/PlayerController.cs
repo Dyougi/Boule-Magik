@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] float m_smoothFactor; // the smooth factor for the positive moving of the player on the positive axe x
     [SerializeField] Transform m_playerLimit; // the position of the limit of where the player can go
 
-
     AudioSource m_managerAudio;
     Transform m_bouleMagikMesh;
     Rigidbody2D m_rigidbody;
@@ -44,8 +43,7 @@ public class PlayerController : MonoBehaviour {
                 transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);
                 m_bouleMagikMesh.Rotate(new Vector3(0, 0, -(90 * m_speedScroll * Time.deltaTime)));
             }
-            m_savePosX = transform.position.x;
-            
+            m_savePosX = transform.position.x;           
         }
     }
 
@@ -54,6 +52,16 @@ public class PlayerController : MonoBehaviour {
         if (other.tag == "loseTrigger")
         {
             GameObject.Find("GameManager").GetComponent<GameManager>().lose();
+        }
+        if (other.tag == "bonus")
+        {
+            switch (other.GetComponent<Bonus>().BonusType)
+            {
+                case GameManager.e_bonusType.SPEED:
+                    applySpeedBonus();
+                    break;
+            }
+            Destroy(other.gameObject);
         }
     }
 
@@ -87,6 +95,16 @@ public class PlayerController : MonoBehaviour {
                 m_managerAudio.PlayOneShot(m_jumpSound);
                 m_rigidbody.AddForce(new Vector2(0, m_velocityY));
             }
+    }
+
+    void applySpeedBonus()
+    {
+
+    }
+
+    void removeSpeedBonus()
+    {
+
     }
 
     // PUBLIC METHODES

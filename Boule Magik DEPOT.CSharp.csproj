@@ -69,6 +69,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Level\Bonus.cs" />
     <Compile Include="Assets\Scripts\Level\GameManager.cs" />
     <Compile Include="Assets\Scripts\Level\Platform.cs" />
     <Compile Include="Assets\Scripts\Level\ScrollingEntity.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Assets\Scripts\Others\AutoDestroyParticleSystem.cs" />
     <Compile Include="Assets\Scripts\Others\DynamicTiling.cs" />
     <Compile Include="Assets\Scripts\Others\TextureTilingController.cs" />
+    <Compile Include="Assets\Scripts\Others\Tools.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
     <Compile Include="Assets\sumMusic\Sample\SumMusicMultiSceneTest.cs" />
     <Compile Include="Assets\sumMusic\Sample\SumMusicSampleMenu.cs" />

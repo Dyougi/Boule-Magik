@@ -6,6 +6,8 @@ public class Platform : MonoBehaviour
 
     [SerializeField] Transform m_endEntity;
     [SerializeField] Transform m_unspawnEntity;
+    [SerializeField] Transform[] m_bonusSpawnPosition;
+    [SerializeField] GameObject[] m_bonus;
     [SerializeField] int widthSize;
     [SerializeField] int m_pointGived;
 
@@ -45,7 +47,6 @@ public class Platform : MonoBehaviour
         {
             m_isPaused = value;
         }
-
     }
 
     public int WidthSize
@@ -77,8 +78,22 @@ public class Platform : MonoBehaviour
         }
     }
 
-    public void initPlatform(float newSpeed)
+    public void initPlatform(float newSpeed, int chanceBonus)
     {
         m_speedTranslate = newSpeed;
+        if (m_bonusSpawnPosition.Length != 0)
+        {
+            foreach (Transform tr in m_bonusSpawnPosition)
+            {
+                if (Tools.throwOfDice(chanceBonus))
+                {
+                    Debug.Log("m_bonus.Length - 1 = " + (m_bonusSpawnPosition.Length - 1) + ", Instance bonus for " + gameObject.name);
+                    int nbrRand = Random.Range(0, m_bonus.Length - 1);
+                    GameObject instance =  Instantiate(m_bonus[nbrRand], tr.position, Quaternion.identity) as GameObject;
+                    instance.transform.parent = gameObject.transform;
+                    instance.GetComponent<Bonus>().initBonus((GameManager.e_bonusType)nbrRand);
+                }
+            }
+        }
     }
 }
