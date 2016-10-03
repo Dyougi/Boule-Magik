@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
 
 
@@ -25,7 +24,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] AudioClip m_loseSound; // the Text from the GUI to show points
     [SerializeField] bool m_test; // the Text from the GUI to show points
 
-    public enum e_bonusType { SPEED }
+    public enum e_bonusType { SPEED, POINT }
 
     List<GameObject> m_platformTab; // list of platforms instanciated
     GameObject currentPlatform; // the current platform handled
@@ -59,6 +58,7 @@ public class GameManager : MonoBehaviour {
                 m_sizePlatformSave = currentPlatform.GetComponent<Platform>().WidthSize;
                 m_platformTab.Add(currentPlatform);
                 updateSpeedScroll(m_updateSpeedScroll);
+                Debug.Log("Instance platform : " + currentPlatform.name + ", speed scroll : " + m_speedScroll);
             }
             m_timeBetweenTwoInstancePlatform += Time.deltaTime * m_speedScroll;
         }
@@ -150,6 +150,11 @@ public class GameManager : MonoBehaviour {
         m_soundManager.clip = m_loseSound;
         m_soundManager.Play();
         m_musicManager.Stop();
+        foreach (ParticleSystem particl in m_player.GetComponentsInParent<ParticleSystem>())
+        {
+            if (particl.isPlaying)
+                particl.Stop();
+        }
         Instantiate(m_deathParticleSystem, m_player.transform.position, m_deathParticleSystem.transform.rotation);
     }
 

@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class ScrollingEntity : MonoBehaviour
 {
-    [SerializeField] Transform m_endEntity;
-    [SerializeField] Transform m_unspawnEntity;
-    [SerializeField] Transform m_spawnEntity;
+    [SerializeField] Transform m_endEntity; // Landamrk of where the platform have to be destroyed on himself
+    [SerializeField] Transform m_unspawnEntity; // Landmark of where the platform have to be destroyed in the world
+    [SerializeField] Transform m_spawnEntity; // Where the platform have to be instanciated
 
-    float m_speedTranslate;
-    bool m_isPaused;
+    float m_speedTranslate; // Speed of the platform in -x (for the scrolling)
+    bool m_isPaused; // Is game paused ?
 
     // UNITY METHODES
 
@@ -17,16 +16,35 @@ public class ScrollingEntity : MonoBehaviour
         m_isPaused = false;
     }
 
-    void Update()
+    bool test = false;
+
+    void FixedUpdate()
     {
         if (!m_isPaused)
         {
-
-            if (m_endEntity.position.x <= m_unspawnEntity.position.x)
+            test = false;
+                if (m_endEntity.position.x <= m_unspawnEntity.position.x)
             {
-                transform.position = m_spawnEntity.position - new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0);
+                test = true;
+                if (gameObject.name == "FirstBackgroundPivot")
+                {
+                    Debug.Log("##################################################");
+                    Vector3 tmp = m_spawnEntity.position - new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0);
+                    Debug.Log("diff quand supêrieur a 20 : " + new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0));
+                    Debug.Log("le vecteur : " + tmp);
+                }
+                m_endEntity.position = m_spawnEntity.position - new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0);
+                if (gameObject.name == "FirstBackgroundPivot")
+                    Debug.Log("position : " + m_endEntity.position);
             }
+            if (gameObject.name == "FirstBackgroundPivot" && test)
+                Debug.Log("le translate : " + -m_speedTranslate * Time.deltaTime);
             transform.Translate(new Vector3(-m_speedTranslate * Time.deltaTime, 0, 0));
+            if (gameObject.name == "FirstBackgroundPivot" && test)
+            {
+                Debug.Log("transform = " + transform.position);
+                Debug.Log("##################################################");
+            }
         }
     }
 

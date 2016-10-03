@@ -1,18 +1,17 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Platform : MonoBehaviour
 {
 
-    [SerializeField] Transform m_endEntity;
-    [SerializeField] Transform m_unspawnEntity;
-    [SerializeField] Transform[] m_bonusSpawnPosition;
-    [SerializeField] GameObject[] m_bonus;
-    [SerializeField] int widthSize;
-    [SerializeField] int m_pointGived;
+    [SerializeField] Transform m_endEntity; // Landamrk of where the platform have to be destroyed on himself
+    [SerializeField] Transform m_unspawnEntity; // Landmark of where the platform have to be destroyed in the world
+    [SerializeField] Transform[] m_bonusSpawnPosition; // Array of where the bonus can be spawned on the platform
+    [SerializeField] GameObject[] m_bonus; // List of bonus that can be instanciated
+    [SerializeField] int widthSize; // Width size of the platform
+    [SerializeField] int m_pointGived; // How much point gived when passed
 
-    float m_speedTranslate;
-    bool m_isPaused;
+    float m_speedTranslate; // Speed of the translate for this platform (for the scrolling purpose)
+    bool m_isPaused; // Is game paused ? Then stop translate
 
     // UNITY METHODES
 
@@ -21,7 +20,7 @@ public class Platform : MonoBehaviour
         m_isPaused = false;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (!m_isPaused)
         {
@@ -87,11 +86,11 @@ public class Platform : MonoBehaviour
             {
                 if (Tools.throwOfDice(chanceBonus))
                 {
-                    Debug.Log("m_bonus.Length - 1 = " + (m_bonusSpawnPosition.Length - 1) + ", Instance bonus for " + gameObject.name);
-                    int nbrRand = Random.Range(0, m_bonus.Length - 1);
+                    Debug.Log("m_bonus.Length = " + (m_bonusSpawnPosition.Length) + ", Instance bonus for " + gameObject.name);
+                    int nbrRand = Random.Range(0, m_bonus.Length);
                     GameObject instance =  Instantiate(m_bonus[nbrRand], tr.position, Quaternion.identity) as GameObject;
                     instance.transform.parent = gameObject.transform;
-                    instance.GetComponent<Bonus>().initBonus((GameManager.e_bonusType)nbrRand);
+                    //instance.GetComponent<Bonus>().initBonus((GameManager.e_bonusType)nbrRand, 5);
                 }
             }
         }
