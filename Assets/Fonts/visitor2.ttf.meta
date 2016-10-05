@@ -1,15 +1,16 @@
 fileFormatVersion: 2
-guid: 47b5233b483cae246b333e9c96f63590
-timeCreated: 1470506350
+guid: 1be480b510964374fa917327e5585e6a
+timeCreated: 1475614096
 licenseType: Free
 TrueTypeFontImporter:
-  serializedVersion: 3
+  serializedVersion: 4
   fontSize: 16
   forceTextureCase: -2
-  characterSpacing: 1
-  characterPadding: 0
+  characterSpacing: 0
+  characterPadding: 1
   includeFontData: 1
-  fontNames: []
+  fontNames:
+  - Visitor TT2 BRK
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
