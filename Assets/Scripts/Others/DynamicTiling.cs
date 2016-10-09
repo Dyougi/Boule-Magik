@@ -7,7 +7,7 @@ public class DynamicTiling : MonoBehaviour {
 
 	void Start () {
 
-            GetComponent<Renderer>().material.mainTextureScale = new Vector2(gameObject.transform.localScale.x, gameObject.transform.localScale.y);
+            GetComponent<Renderer>().material.mainTextureScale = new Vector2(gameObject.transform.localScale.x, -gameObject.transform.localScale.y);
     }
 	
 }

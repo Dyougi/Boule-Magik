@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\Level\Platform.cs" />
     <Compile Include="Assets\Scripts\Level\ScrollingEntity.cs" />
     <Compile Include="Assets\Scripts\Level\ScrollingImage.cs" />
+    <Compile Include="Assets\Scripts\Menu\MenuManager.cs" />
     <Compile Include="Assets\Scripts\Others\AutoDestroyParticleSystem.cs" />
     <Compile Include="Assets\Scripts\Others\DynamicTiling.cs" />
     <Compile Include="Assets\Scripts\Others\TextureTilingController.cs" />

@@ -16,35 +16,13 @@ public class ScrollingEntity : MonoBehaviour
         m_isPaused = false;
     }
 
-    bool test = false;
-
     void FixedUpdate()
     {
         if (!m_isPaused)
         {
-            test = false;
-                if (m_endEntity.position.x <= m_unspawnEntity.position.x)
-            {
-                test = true;
-                if (gameObject.name == "FirstBackgroundPivot")
-                {
-                    Debug.Log("##################################################");
-                    Vector3 tmp = m_spawnEntity.position - new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0);
-                    Debug.Log("diff quand supêrieur a 20 : " + new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0));
-                    Debug.Log("le vecteur : " + tmp);
-                }
+            if (m_endEntity.position.x <= m_unspawnEntity.position.x)
                 m_endEntity.position = m_spawnEntity.position - new Vector3(Mathf.Abs(m_endEntity.position.x) - 20, 0, 0);
-                if (gameObject.name == "FirstBackgroundPivot")
-                    Debug.Log("position : " + m_endEntity.position);
-            }
-            if (gameObject.name == "FirstBackgroundPivot" && test)
-                Debug.Log("le translate : " + -m_speedTranslate * Time.deltaTime);
             transform.Translate(new Vector3(-m_speedTranslate * Time.deltaTime, 0, 0));
-            if (gameObject.name == "FirstBackgroundPivot" && test)
-            {
-                Debug.Log("transform = " + transform.position);
-                Debug.Log("##################################################");
-            }
         }
     }
 

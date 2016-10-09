@@ -4,6 +4,8 @@ using System.Collections.Generic;
 public class PlayerController : MonoBehaviour {
 
     [SerializeField] AudioClip m_jumpSound; // jump sound !
+    [SerializeField] AudioClip m_bonusSpeedSound; // jump sound !
+    [SerializeField] AudioClip m_bonusPointSound; // jump sound !
     [SerializeField] float m_startVelocityY; // the start velocity for y axe (jump)
     [SerializeField] float m_smoothFactorDefault; // the smooth factor for the positive moving of the player on the positive axe x
     [SerializeField] Transform m_playerLimit; // the position of the limit of where the player can go
@@ -25,7 +27,6 @@ public class PlayerController : MonoBehaviour {
     float m_smoothFactor;
     int m_multRotation;
     bool m_isPaused;
-    bool m_isCloseToWall;
 
 
     // UNITY METHODES
@@ -41,11 +42,11 @@ public class PlayerController : MonoBehaviour {
         resetPlayer();
     }
 
-	void Update () {
+	void Update()
+    {
         if (!m_isPaused)
         {
             manageInputs();
-            m_isCloseToWall = false;
             if (m_canDoubleJump == false && m_rigidbody.velocity.y == 0)
                 m_canDoubleJump = true;           
             if (!checkIfNear(m_wallCheck.position, m_whatIsWall, 0.2f) && transform.position.x < m_playerLimit.position.x)
@@ -119,9 +120,11 @@ public class PlayerController : MonoBehaviour {
             m_speedBonusPS.Play();
             m_multRotation = 180;
             m_smoothFactor = 0.5f;
+            m_managerAudio.PlayOneShot(m_bonusSpeedSound);
             break;
             case GameManager.e_bonusType.POINT:
                 m_pointBonusPS.Play();
+                m_managerAudio.PlayOneShot(m_bonusPointSound);
                 GameObject.Find("GameManager").GetComponent<GameManager>().updatePoint(3);
             break;
         }
