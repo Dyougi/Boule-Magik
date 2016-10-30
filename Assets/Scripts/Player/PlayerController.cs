@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour {
 
@@ -79,15 +79,22 @@ public class PlayerController : MonoBehaviour {
 
     void manageInputs()
     {
+#if UNITY_ANDROID
+
+        if (Input.touchCount > 0)
+        {
+            if (Input.GetTouch(0).phase == TouchPhase.Began && !EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+            {
+                doJump();
+            }
+        }
+#endif
+#if UNITY_EDITOR
         if (Input.GetButtonDown("Jump"))
         {
             doJump();
         }
-        
-        if (Input.GetButton("Power"))
-        {
-
-        }
+#endif
     }
 
     void doJump()
@@ -106,6 +113,7 @@ public class PlayerController : MonoBehaviour {
                 Debug.Log("Double jump");
                 m_canDoubleJump = false;
                 m_managerAudio.PlayOneShot(m_jumpSound);
+                //m_rigidbody.velocity = Vector2.zero;
                 m_rigidbody.AddForce(new Vector2(0, m_velocityY));
             }
         }
@@ -157,6 +165,7 @@ public class PlayerController : MonoBehaviour {
         m_canDoubleJump = true;
         m_multRotation = m_multRotationDefault;
         transform.position = m_positionDefault;
+        transform.eulerAngles = Vector3.zero;
     }
 
     public bool Pause
@@ -168,6 +177,14 @@ public class PlayerController : MonoBehaviour {
 
         set
         {
+            if (value)
+            {
+                GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+            }
+            else
+            {
+                GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+            }
             m_isPaused = value;
         }
 

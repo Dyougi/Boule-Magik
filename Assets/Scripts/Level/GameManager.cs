@@ -22,6 +22,10 @@ public class GameManager : MonoBehaviour {
     [SerializeField] AudioSource m_soundManager; // audio source for sound
     [SerializeField] AudioClip m_musicDefault; // the Text from the GUI to show points
     [SerializeField] AudioClip m_loseSound; // the Text from the GUI to show points
+    [SerializeField] Sprite m_playSprite; // the Text from the GUI to show points
+    [SerializeField] Sprite m_pauseSprite; // the Text from the GUI to show points
+    [SerializeField] GameObject m_retryButton; //
+    [SerializeField] GameObject m_pauseButton; //
     [SerializeField] bool m_test; // the Text from the GUI to show points
 
     public enum e_bonusType { SPEED, POINT }
@@ -35,6 +39,7 @@ public class GameManager : MonoBehaviour {
     int m_countTab; // count set randomly to instance a random platform
     bool m_isPaused; // is game paused ?
     bool m_isLose; // is the game lost ?
+    float timeWhenLose;
 
     // UNITY METHODES
 
@@ -82,15 +87,16 @@ public class GameManager : MonoBehaviour {
         m_speedScroll = m_startSpeedScroll; // set default speed for level transtaltion
         m_timeBetweenTwoInstancePlatform = 0; // set the default value for the time passed between two instance of platform
         m_sizePlatformSave = m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform; // set default value for variable of the save of size of current platform
+        PlayerPrefs.SetInt("Score", 0);
     }
 
     void manageInput()
     {
-        if (Input.GetButton("Submit"))
+        if (m_isLose)
         {
-            if (m_isLose)
+            if (timeWhenLose + 1 < Time.time)
             {
-                restartGame();
+                m_retryButton.SetActive(true);
             }
         }
     }
@@ -143,8 +149,24 @@ public class GameManager : MonoBehaviour {
         Pause = pause;
     }
 
+    public void pauseButtonPressed(Image buttonImage)
+    {
+        buttonImage.sprite = m_isPaused == false ? m_playSprite : m_pauseSprite;
+        if (m_isPaused == true)
+            m_musicManager.UnPause();
+        else
+            m_musicManager.Pause();
+        pause(!m_isPaused);
+    }
+
     public void lose()
     {
+        if (PlayerPrefs.GetInt("Score") < m_points)
+        {
+            PlayerPrefs.SetInt("Score", m_points);
+            PlayerPrefs.Save();
+        }
+        m_pauseButton.SetActive(false);
         pause(true);
         m_isLose = true;
         m_soundManager.clip = m_loseSound;
@@ -156,6 +178,7 @@ public class GameManager : MonoBehaviour {
                 particl.Stop();
         }
         Instantiate(m_deathParticleSystem, m_player.transform.position, m_deathParticleSystem.transform.rotation);
+        timeWhenLose = Time.time;
     }
 
     public void restartGame()
@@ -166,5 +189,7 @@ public class GameManager : MonoBehaviour {
         initGame();
         m_musicManager.Play();
         pause(false);
+        m_retryButton.SetActive(false);
+        m_pauseButton.SetActive(true);
     }
 }
