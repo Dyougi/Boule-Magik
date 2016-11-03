@@ -9,7 +9,7 @@ public class MenuManager : MonoBehaviour {
     void Update()
     {
         if (scoreText.text == "Best score : ")
-            scoreText.text += PlayerPrefs.GetInt("Score").ToString();
+            scoreText.text += PlayerPrefs.GetInt("score").ToString();
     }
 
     public void launchGame()

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] Sprite m_pauseSprite; // the Text from the GUI to show points
     [SerializeField] GameObject m_retryButton; //
     [SerializeField] GameObject m_pauseButton; //
+    [SerializeField] GameObject m_menuButton; //
     [SerializeField] bool m_test; // the Text from the GUI to show points
 
     public enum e_bonusType { SPEED, POINT }
@@ -87,7 +89,8 @@ public class GameManager : MonoBehaviour {
         m_speedScroll = m_startSpeedScroll; // set default speed for level transtaltion
         m_timeBetweenTwoInstancePlatform = 0; // set the default value for the time passed between two instance of platform
         m_sizePlatformSave = m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform; // set default value for variable of the save of size of current platform
-        PlayerPrefs.SetInt("Score", 0);
+        if (!PlayerPrefs.HasKey("score"))
+            PlayerPrefs.SetInt("score", 0);
     }
 
     void manageInput()
@@ -97,6 +100,7 @@ public class GameManager : MonoBehaviour {
             if (timeWhenLose + 1 < Time.time)
             {
                 m_retryButton.SetActive(true);
+                m_menuButton.SetActive(true);
             }
         }
     }
@@ -161,9 +165,9 @@ public class GameManager : MonoBehaviour {
 
     public void lose()
     {
-        if (PlayerPrefs.GetInt("Score") < m_points)
+        if (PlayerPrefs.GetInt("score") < m_points)
         {
-            PlayerPrefs.SetInt("Score", m_points);
+            PlayerPrefs.SetInt("score", m_points);
             PlayerPrefs.Save();
         }
         m_pauseButton.SetActive(false);
@@ -190,6 +194,12 @@ public class GameManager : MonoBehaviour {
         m_musicManager.Play();
         pause(false);
         m_retryButton.SetActive(false);
+        m_menuButton.SetActive(false);
         m_pauseButton.SetActive(true);
+    }
+
+    public void goMenu()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }
