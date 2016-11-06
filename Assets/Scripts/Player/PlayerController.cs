@@ -46,9 +46,9 @@ public class PlayerController : MonoBehaviour {
     {
         if (!m_isPaused)
         {
-            manageInputs();
             if (m_canDoubleJump == false && m_rigidbody.velocity.y == 0)
-                m_canDoubleJump = true;           
+                m_canDoubleJump = true;
+            manageInputs();
             if (!checkIfNear(m_wallCheck.position, m_whatIsWall, 0.2f) && transform.position.x < m_playerLimit.position.x)
             {
                 transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);
@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour {
                 Debug.Log("Double jump");
                 m_canDoubleJump = false;
                 m_managerAudio.PlayOneShot(m_jumpSound);
-                //m_rigidbody.velocity = Vector2.zero;
+                m_rigidbody.velocity = Vector2.zero;
                 m_rigidbody.AddForce(new Vector2(0, m_velocityY));
             }
         }
@@ -125,16 +125,16 @@ public class PlayerController : MonoBehaviour {
         switch (newBonus)
         {
             case GameManager.e_bonusType.SPEED:
-            m_speedBonusPS.Play();
-            m_multRotation = 180;
-            m_smoothFactor = 0.5f;
-            m_managerAudio.PlayOneShot(m_bonusSpeedSound);
-            break;
+                m_speedBonusPS.Play();
+                m_multRotation = 180;
+                m_smoothFactor = 0.5f;
+                m_managerAudio.PlayOneShot(m_bonusSpeedSound);
+                break;
             case GameManager.e_bonusType.POINT:
                 m_pointBonusPS.Play();
                 m_managerAudio.PlayOneShot(m_bonusPointSound);
                 GameObject.Find("GameManager").GetComponent<GameManager>().updatePoint(3);
-            break;
+                break;
         }
     }
 

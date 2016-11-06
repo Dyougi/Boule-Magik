@@ -59,7 +59,8 @@ public class GameManager : MonoBehaviour {
             if (m_sizePlatformSave <= (m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform))
             {
                 m_timeBetweenTwoInstancePlatform = 0;
-                m_countTab = Random.Range(0, m_platformsGO.Length);
+                //m_countTab = Random.Range(0, m_platformsGO.Length);
+                m_countTab = Random.Range(0, 2);
                 currentPlatform = Instantiate(m_platformsGO[m_countTab], m_spawnPlatform.position, Quaternion.identity) as GameObject;
                 currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll, m_chanceBonus);
                 m_sizePlatformSave = currentPlatform.GetComponent<Platform>().WidthSize;
