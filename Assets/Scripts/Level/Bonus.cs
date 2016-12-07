@@ -6,8 +6,8 @@ public class Bonus : MonoBehaviour {
     public static event BonusAction OnBonusOn;
     public static event BonusAction OnBonusOff;
 
-    [SerializeField]GameManager.e_bonusType m_bonusType;
-    [SerializeField]float m_bonusTime;
+    [SerializeField] GameManager.e_bonusType m_bonusType;
+    [SerializeField] float m_bonusTime;
     float timer;
     bool isOn;
     

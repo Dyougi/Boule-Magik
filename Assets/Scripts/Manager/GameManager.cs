@@ -9,51 +9,70 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     GameObject[] m_platformsGO; // tab for all platforms
+
     [Range(0, 100)]
     [SerializeField]
     int m_chanceBonus;
+
     [SerializeField]
     float m_spaceBetweenPlatform; // space between platform
+
     [SerializeField]
     float m_startSpeedScroll; // the default speed of the level translate
+
     [SerializeField]
     float m_updateSpeedScroll; // the speed added at each tick
+
     [SerializeField]
     GameObject m_firstBackground; // first background
+
     [SerializeField]
     GameObject m_secondBackground; // second background
+
     [SerializeField]
     GameObject m_firstFloor; // first floor
+
     [SerializeField]
     GameObject m_secondFloor; // second floor
+
     [SerializeField]
     GameObject m_player; // GO of the player
+
     [SerializeField]
     Transform m_spawnPlatform; // the position of where platform are instanciated
+
     [SerializeField]
     GameObject m_deathParticleSystem; // the GO with the particle system played when player is dead
+
     [SerializeField]
     Text m_uiPoint; // the Text from the GUI to show points
+
     [SerializeField]
     AudioSource m_musicManager; // audio source for music
+
     [SerializeField]
     AudioSource m_soundManager; // audio source for sound
+
     [SerializeField]
     AudioClip m_musicDefault; // the Text from the GUI to show points
+
     [SerializeField]
     AudioClip m_loseSound; // the Text from the GUI to show points
+
     [SerializeField]
     Sprite m_playSprite; // the Text from the GUI to show points
+
     [SerializeField]
     Sprite m_pauseSprite; // the Text from the GUI to show points
+
     [SerializeField]
-    GameObject m_retryButton; //
+    GameObject m_retryButton; // the retry button when the player lose
+
     [SerializeField]
-    GameObject m_pauseButton; //
+    GameObject m_pauseButton; // the pause button
+
     [SerializeField]
-    GameObject m_menuButton; //
-    [SerializeField]
-    bool m_test; // the Text from the GUI to show points
+    GameObject m_menuButton; // the menu button to get back to the menu scene when the player lose
 
     public enum e_bonusType { SPEED, POINT }
 
@@ -66,7 +85,7 @@ public class GameManager : MonoBehaviour
     int m_countTab; // count set randomly to instance a random platform
     bool m_isPaused; // is game paused ?
     bool m_isLose; // is the game lost ?
-    float timeWhenLose;
+    float timeWhenLose; // the moment the player lost
 
     // UNITY METHODES
 
@@ -81,7 +100,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         manageInput();
-        if (!Pause && !m_test)
+        if (!Pause)
         {
             if (m_sizePlatformSave <= (m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform))
             {
@@ -203,7 +222,7 @@ public class GameManager : MonoBehaviour
         m_soundManager.clip = m_loseSound;
         m_soundManager.Play();
         m_musicManager.Stop();
-        foreach (ParticleSystem particl in m_player.GetComponentsInParent<ParticleSystem>())
+        foreach (ParticleSystem particl in m_player.GetComponentsInChildren<ParticleSystem>())
         {
             if (particl.isPlaying)
                 particl.Stop();

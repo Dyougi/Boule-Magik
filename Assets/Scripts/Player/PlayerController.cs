@@ -3,24 +3,48 @@ using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour {
 
-    [SerializeField] AudioClip m_jumpSound; // jump sound !
-    [SerializeField] AudioClip m_bonusSpeedSound; // jump sound !
-    [SerializeField] AudioClip m_bonusPointSound; // jump sound !
-    [SerializeField] float m_startVelocityY; // the start velocity for y axe (jump)
-    [SerializeField] float m_smoothFactorDefault; // the smooth factor for the positive moving of the player on the positive axe x
-    [SerializeField] Transform m_playerLimit; // the position of the limit of where the player can go
-    [SerializeField] Transform m_wallCheck; // trigger to check if the player is touching a wall
-    [SerializeField] Transform m_roofCheck; // trigger to check if the player is touching a wall
-    [SerializeField] Transform m_raycastX; // 
-    [SerializeField] Transform m_raycastY; // 
-    [SerializeField] LayerMask m_whatIsWall; // A mask determining what is ground to the character
-    [SerializeField] LayerMask m_whatIsRoof; // A mask determining what is ground to the character
-    [SerializeField] ParticleSystem m_speedBonusPS;
-    [SerializeField] ParticleSystem m_pointBonusPS;
-    [SerializeField] int m_multRotationDefault;
+    [SerializeField]
+    AudioClip m_jumpSound; // jump sound !
 
-    float m_xMaxLimit;
-    float m_YMaxLimit;
+    [SerializeField]
+    AudioClip m_bonusSpeedSound; // bonus speed sound !
+
+    [SerializeField]
+    AudioClip m_bonusPointSound; // bonus point sound !
+
+    [SerializeField]
+    float m_startVelocityY; // the start velocity for y axe (jump)
+
+    [SerializeField]
+    float m_smoothFactorDefault; // the smooth factor for the positive moving of the player on the positive axe x
+
+    [SerializeField]
+    Transform m_playerLimit; // the position of the limit of where the player can go
+
+    [SerializeField]
+    Transform m_wallCheck; // trigger to check if the player is touching a wall
+
+    [SerializeField]
+    Transform m_roofCheck; // trigger to check if the player is touching a wall
+
+    [SerializeField]
+    Transform m_raycastX; // Position of the origine of the raycast to see collider on the x axe
+
+    [SerializeField]
+    LayerMask m_whatIsWall; // A mask determining what is ground to the character
+
+    [SerializeField]
+    LayerMask m_whatIsRoof; // A mask determining what is ground to the character
+
+    [SerializeField]
+    ParticleSystem m_speedBonusPS;
+
+    [SerializeField]
+    ParticleSystem m_pointBonusPS;
+
+    [SerializeField]
+    int m_multRotationDefault;
+
 
     AudioSource m_managerAudio;
     Transform m_bouleMagikMesh;
@@ -50,11 +74,8 @@ public class PlayerController : MonoBehaviour {
     void LateUpdate()
     {
         RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, LayerMask.NameToLayer("Ground"));
-        Debug.DrawRay(m_raycastX.position, Vector3.right, Color.green);
         if (hitX && hitX.distance < 0.5)
-        {
             transform.position = new Vector3(transform.position.x - (0.5f - hitX.distance), transform.position.y, transform.position.z);
-        }
     }
 
 	void Update()
