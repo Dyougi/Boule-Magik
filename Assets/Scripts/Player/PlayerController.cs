@@ -11,11 +11,16 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] Transform m_playerLimit; // the position of the limit of where the player can go
     [SerializeField] Transform m_wallCheck; // trigger to check if the player is touching a wall
     [SerializeField] Transform m_roofCheck; // trigger to check if the player is touching a wall
+    [SerializeField] Transform m_raycastX; // 
+    [SerializeField] Transform m_raycastY; // 
     [SerializeField] LayerMask m_whatIsWall; // A mask determining what is ground to the character
     [SerializeField] LayerMask m_whatIsRoof; // A mask determining what is ground to the character
     [SerializeField] ParticleSystem m_speedBonusPS;
     [SerializeField] ParticleSystem m_pointBonusPS;
     [SerializeField] int m_multRotationDefault;
+
+    float m_xMaxLimit;
+    float m_YMaxLimit;
 
     AudioSource m_managerAudio;
     Transform m_bouleMagikMesh;
@@ -42,18 +47,28 @@ public class PlayerController : MonoBehaviour {
         resetPlayer();
     }
 
+    void LateUpdate()
+    {
+        RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, LayerMask.NameToLayer("Ground"));
+        Debug.DrawRay(m_raycastX.position, Vector3.right, Color.green);
+        if (hitX && hitX.distance < 0.5)
+        {
+            transform.position = new Vector3(transform.position.x - (0.5f - hitX.distance), transform.position.y, transform.position.z);
+        }
+    }
+
 	void Update()
     {
         if (!m_isPaused)
         {
             if (m_canDoubleJump == false && m_rigidbody.velocity.y == 0)
                 m_canDoubleJump = true;
-            manageInputs();
-            if (!checkIfNear(m_wallCheck.position, m_whatIsWall, 0.2f) && transform.position.x < m_playerLimit.position.x)
+            if (!checkIfNear(m_wallCheck.position, m_whatIsWall, 0.1f) && transform.position.x < m_playerLimit.position.x)
             {
                 transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);
                 m_bouleMagikMesh.Rotate(new Vector3(0, 0, -(m_multRotation * m_speedScroll * Time.deltaTime)));
             }
+            manageInputs();
         }
     }
 
