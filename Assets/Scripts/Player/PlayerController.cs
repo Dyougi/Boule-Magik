@@ -45,10 +45,13 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]
     int m_multRotationDefault;
 
+    OptionManager m_optionManager;
 
     AudioSource m_managerAudio;
     Transform m_bouleMagikMesh;
     Rigidbody2D m_rigidbody;
+    ParticleSystem m_currentSpeedParticleSystem;
+    ParticleSystem m_currentPointParticleSystem;
     float m_velocityY;
     bool m_canDoubleJump;
     Vector2 m_positionDefault;
@@ -60,9 +63,11 @@ public class PlayerController : MonoBehaviour {
 
     // UNITY METHODES
 
+    
     void Start () {
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_managerAudio = GetComponent<AudioSource>();
+        m_optionManager = GameObject.Find("OptionManager").GetComponent<OptionManager>();
         Transform[] tabTransform =  GetComponentsInChildren<Transform>();
         m_bouleMagikMesh = tabTransform[1];
         m_positionDefault = transform.position;
@@ -82,6 +87,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (!m_isPaused)
         {
+            manageInputs();
             if (m_canDoubleJump == false && m_rigidbody.velocity.y == 0)
                 m_canDoubleJump = true;
             if (!checkIfNear(m_wallCheck.position, m_whatIsWall, 0.1f) && transform.position.x < m_playerLimit.position.x)
@@ -89,7 +95,6 @@ public class PlayerController : MonoBehaviour {
                 transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);
                 m_bouleMagikMesh.Rotate(new Vector3(0, 0, -(m_multRotation * m_speedScroll * Time.deltaTime)));
             }
-            manageInputs();
         }
     }
 
@@ -140,7 +145,8 @@ public class PlayerController : MonoBehaviour {
             if (m_rigidbody.velocity.y == 0)
             {
                 Debug.Log("Jump");
-                m_managerAudio.PlayOneShot(m_jumpSound);
+                if (m_optionManager.Sound == 1)
+                    m_managerAudio.PlayOneShot(m_jumpSound);
                 m_rigidbody.AddForce(new Vector2(0, m_velocityY));
             }
             else
@@ -148,9 +154,10 @@ public class PlayerController : MonoBehaviour {
             {
                 Debug.Log("Double jump");
                 m_canDoubleJump = false;
-                m_managerAudio.PlayOneShot(m_jumpSound);
+                if (m_optionManager.Sound == 1)
+                    m_managerAudio.PlayOneShot(m_jumpSound);
                 m_rigidbody.velocity = Vector2.zero;
-                m_rigidbody.AddForce(new Vector2(0, m_velocityY));
+                m_rigidbody.AddForce(new Vector2(0, m_velocityY + 50));
             }
         }
     }
@@ -162,13 +169,18 @@ public class PlayerController : MonoBehaviour {
         {
             case GameManager.e_bonusType.SPEED:
                 m_speedBonusPS.Play();
+                m_currentSpeedParticleSystem = Instantiate(m_speedBonusPS, transform.position, m_speedBonusPS.transform.rotation) as ParticleSystem;
+                m_currentSpeedParticleSystem.transform.parent = gameObject.transform;
                 m_multRotation = 180;
                 m_smoothFactor = 0.5f;
-                m_managerAudio.PlayOneShot(m_bonusSpeedSound);
+                if (m_optionManager.Sound == 1)
+                    m_managerAudio.PlayOneShot(m_bonusSpeedSound);
                 break;
             case GameManager.e_bonusType.POINT:
-                m_pointBonusPS.Play();
-                m_managerAudio.PlayOneShot(m_bonusPointSound);
+                m_currentPointParticleSystem = Instantiate(m_pointBonusPS, transform.position, m_pointBonusPS.transform.rotation) as ParticleSystem;
+                m_currentPointParticleSystem.transform.parent = gameObject.transform;
+                if (m_optionManager.Sound == 1)
+                    m_managerAudio.PlayOneShot(m_bonusPointSound);
                 GameObject.Find("GameManager").GetComponent<GameManager>().updatePoint(3);
                 break;
         }
@@ -180,11 +192,12 @@ public class PlayerController : MonoBehaviour {
         switch (newBonus)
         {
             case GameManager.e_bonusType.SPEED:
-                m_speedBonusPS.Stop();
+                Destroy(m_currentSpeedParticleSystem);
                 m_multRotation = m_multRotationDefault;
                 m_smoothFactor = m_smoothFactorDefault;
                 break;
             case GameManager.e_bonusType.POINT:
+                Destroy(m_currentPointParticleSystem);
                 break;
         }
     }

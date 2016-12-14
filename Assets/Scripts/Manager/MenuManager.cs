@@ -8,10 +8,50 @@ public class MenuManager : MonoBehaviour {
     Text m_scoreText;
 
     [SerializeField]
-    Canvas m_menuStart;
+    Toggle m_music;
 
     [SerializeField]
-    Canvas m_menuOption;
+    Toggle m_sound;
+
+    [SerializeField]
+    Slider m_speedStart;
+
+    [SerializeField]
+    Text m_speedStartValue;
+
+    [SerializeField]
+    Slider m_speedUpdate;
+
+    [SerializeField]
+    Text m_speedUpdateValue;
+
+    [SerializeField]
+    GameObject m_menuStart;
+
+    [SerializeField]
+    GameObject m_menuOption;
+
+    [SerializeField]
+    Button m_defaultValueButton;
+
+    [SerializeField]
+    OptionManager m_optionManager;
+
+    public enum e_sliderType { SPEEDSTART, SPEEDUPDATE };
+    public enum e_toggleType { MUSIC, SOUND };
+
+    AudioSource m_audioSource;
+    static float m_speedStartDefaultValue = 4;
+    static float m_speedUpdateDefaultValue = 0.05f;
+    bool m_isOption;
+
+    void Start()
+    {
+        m_isOption = false;
+        m_audioSource = GetComponent<AudioSource>();
+        if (m_optionManager.Music == 1)
+            m_audioSource.Play();
+    }
 
     void Update()
     {
@@ -24,8 +64,26 @@ public class MenuManager : MonoBehaviour {
         SceneManager.LoadScene("MainScene");
     }
 
-    public void optionsMenu()
+    public void switchMenu()
     {
+        if (m_isOption)
+        {
+            m_menuStart.SetActive(true);
+            m_menuOption.SetActive(false);
+            m_isOption = false;
+        }
+        else
+        {
+            m_menuStart.SetActive(false);
+            m_menuOption.SetActive(true);
+            m_isOption = true;
+        }
+    }
 
+    public void resetValues()
+    {
+        m_music.isOn = true;
+        m_speedStart.value = m_speedStartDefaultValue;
+        m_speedUpdate.value = m_speedUpdateDefaultValue;
     }
 }

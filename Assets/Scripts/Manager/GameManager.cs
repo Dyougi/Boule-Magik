@@ -76,6 +76,8 @@ public class GameManager : MonoBehaviour
 
     public enum e_bonusType { SPEED, POINT }
 
+    OptionManager m_optionManager;
+
     List<GameObject> m_platformTab; // list of platforms instanciated
     GameObject currentPlatform; // the current platform handled
     int m_points; // current points of the player
@@ -92,8 +94,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         m_platformTab = new List<GameObject>();
+        m_optionManager = GameObject.Find("OptionManager").GetComponent<OptionManager>();
         m_musicManager.clip = m_musicDefault;
-        m_musicManager.Play();
+        if (PlayerPrefs.GetInt("MusicToggle") == 1)
+            m_musicManager.Play();
+        m_startSpeedScroll = m_optionManager.SpeedStart;
+        m_updateSpeedScroll = m_optionManager.Speedupdate;
         initGame();
     }
 
@@ -202,10 +208,13 @@ public class GameManager : MonoBehaviour
     public void pauseButtonPressed(Image buttonImage)
     {
         buttonImage.sprite = m_isPaused == false ? m_playSprite : m_pauseSprite;
-        if (m_isPaused == true)
-            m_musicManager.UnPause();
-        else
-            m_musicManager.Pause();
+        if (m_optionManager.Music == 1)
+        {
+            if (m_isPaused == true)
+                m_musicManager.UnPause();
+            else
+                m_musicManager.Pause();
+        }
         pause(!m_isPaused);
     }
 
@@ -219,8 +228,8 @@ public class GameManager : MonoBehaviour
         m_pauseButton.SetActive(false);
         pause(true);
         m_isLose = true;
-        m_soundManager.clip = m_loseSound;
-        m_soundManager.Play();
+        if (m_optionManager.Sound == 1)
+            m_soundManager.PlayOneShot(m_loseSound);
         m_musicManager.Stop();
         foreach (ParticleSystem particl in m_player.GetComponentsInChildren<ParticleSystem>())
         {
@@ -237,7 +246,8 @@ public class GameManager : MonoBehaviour
             Destroy(obj);
         m_player.GetComponent<PlayerController>().resetPlayer();
         initGame();
-        m_musicManager.Play();
+        if (m_optionManager.Music == 1)
+            m_musicManager.Play();
         pause(false);
         m_retryButton.SetActive(false);
         m_menuButton.SetActive(false);
