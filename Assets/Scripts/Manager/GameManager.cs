@@ -94,9 +94,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         m_platformTab = new List<GameObject>();
-        m_optionManager = GameObject.Find("OptionManager").GetComponent<OptionManager>();
+        m_optionManager = OptionManager.Instance;
         m_musicManager.clip = m_musicDefault;
-        if (PlayerPrefs.GetInt("MusicToggle") == 1)
+        if (m_optionManager.Music == 1)
             m_musicManager.Play();
         m_startSpeedScroll = m_optionManager.SpeedStart;
         m_updateSpeedScroll = m_optionManager.Speedupdate;

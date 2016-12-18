@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour {
     void Start () {
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_managerAudio = GetComponent<AudioSource>();
-        m_optionManager = GameObject.Find("OptionManager").GetComponent<OptionManager>();
+        m_optionManager = OptionManager.Instance;
         Transform[] tabTransform =  GetComponentsInChildren<Transform>();
         m_bouleMagikMesh = tabTransform[1];
         m_positionDefault = transform.position;

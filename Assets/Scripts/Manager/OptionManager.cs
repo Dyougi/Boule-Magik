@@ -3,18 +3,29 @@ using System.Collections;
 
 public class OptionManager : MonoBehaviour {
 
-    public delegate void OptionAction(bool isOn);
-    public static event OptionAction OnMusic;
-    public static event OptionAction OnSound;
-
     int m_isMusic;
     int m_isSound;
     float m_speedStart;
     float m_speedUpdate;
+    bool isLoaded = false;
 
-    void Awake()
+    private static OptionManager instance;
+
+    public static OptionManager Instance
+    {
+        get { return instance; }
+    }
+
+    private void Awake()
     {
         DontDestroyOnLoad(transform.gameObject);
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
     }
 
     void Start()
@@ -23,6 +34,7 @@ public class OptionManager : MonoBehaviour {
         m_isSound = PlayerPrefs.GetInt("sound");
         m_speedStart = PlayerPrefs.GetFloat("speedStart");
         m_speedUpdate = PlayerPrefs.GetFloat("speedUpdate");
+        isLoaded = true;
     }
 
     public void saveOption()
@@ -41,8 +53,7 @@ public class OptionManager : MonoBehaviour {
         {
             m_isMusic = value;
             PlayerPrefs.SetInt("music", m_isMusic);
-            if (OnMusic != null)
-                OnMusic(m_isMusic == 1 ? true : false);
+            Debug.Log("OptionManager music set to " + m_isMusic);
         }
     }
 
@@ -57,8 +68,7 @@ public class OptionManager : MonoBehaviour {
         {
             m_isSound = value;
             PlayerPrefs.SetInt("sound", m_isSound);
-            if (OnSound != null)
-                OnSound(m_isSound == 1 ? true : false);
+            Debug.Log("OptionManager sound set to " + m_isSound);
         }
     }
 
@@ -73,6 +83,7 @@ public class OptionManager : MonoBehaviour {
         {
             m_speedStart = value;
             PlayerPrefs.SetFloat("speedStart", m_speedStart);
+            Debug.Log("OptionManager speedStart set to " + m_speedStart);
         }
     }
 
@@ -87,6 +98,15 @@ public class OptionManager : MonoBehaviour {
         {
             m_speedUpdate = value;
             PlayerPrefs.SetFloat("speedUpdate", m_speedUpdate);
+            Debug.Log("OptionManager speedUpdate set to " + m_speedUpdate);
+        }
+    }
+
+    public bool IsLoaded
+    {
+        get
+        {
+            return isLoaded;
         }
     }
 }
