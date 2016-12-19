@@ -30,10 +30,34 @@ public class OptionManager : MonoBehaviour {
 
     void Start()
     {
-        m_isMusic = PlayerPrefs.GetInt("music");
-        m_isSound = PlayerPrefs.GetInt("sound");
-        m_speedStart = PlayerPrefs.GetFloat("speedStart");
-        m_speedUpdate = PlayerPrefs.GetFloat("speedUpdate");
+        if (PlayerPrefs.HasKey("music"))
+            m_isMusic = PlayerPrefs.GetInt("music");
+        else
+        {
+            PlayerPrefs.SetInt("music", 1);
+            m_isMusic = 1;
+        }
+        if (PlayerPrefs.HasKey("sound"))
+            m_isSound = PlayerPrefs.GetInt("sound");
+        else
+        {
+            PlayerPrefs.SetInt("sound", 1);
+            m_isSound = 1;
+        }
+        if (PlayerPrefs.HasKey("speedStart"))
+            m_speedStart = PlayerPrefs.GetFloat("speedStart");
+        else
+        {
+            PlayerPrefs.SetFloat("speedStart", 4);
+            m_speedStart = 4;
+        }
+        if (PlayerPrefs.HasKey("speedUpdate"))
+            m_speedUpdate = PlayerPrefs.GetFloat("speedUpdate");
+        else
+        {
+            PlayerPrefs.SetFloat("speedUpdate", 0.05f);
+            m_speedUpdate = 0.05f;
+        }
         isLoaded = true;
     }
 
