@@ -105,7 +105,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        manageInput();
         if (!Pause)
         {
             if (m_sizePlatformSave <= (m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform))
@@ -120,6 +119,14 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Instance platform : " + currentPlatform.name + ", speed scroll : " + m_speedScroll);
             }
             m_timeBetweenTwoInstancePlatform += Time.deltaTime * m_speedScroll;
+        }
+        if (m_isLose)
+        {
+            if (timeWhenLose + 1 < Time.time)
+            {
+                m_retryButton.SetActive(true);
+                m_menuButton.SetActive(true);
+            }
         }
     }
 
@@ -143,18 +150,6 @@ public class GameManager : MonoBehaviour
         m_sizePlatformSave = m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform; // set default value for variable of the save of size of current platform
         if (!PlayerPrefs.HasKey("score"))
             PlayerPrefs.SetInt("score", 0);
-    }
-
-    void manageInput()
-    {
-        if (m_isLose)
-        {
-            if (timeWhenLose + 1 < Time.time)
-            {
-                m_retryButton.SetActive(true);
-                m_menuButton.SetActive(true);
-            }
-        }
     }
 
     // PUBLIC METHODES
@@ -230,7 +225,8 @@ public class GameManager : MonoBehaviour
         m_isLose = true;
         if (m_optionManager.Sound == 1)
             m_soundManager.PlayOneShot(m_loseSound);
-        m_musicManager.Stop();
+        if (m_optionManager.Music == 1)
+            m_musicManager.Stop();
         foreach (ParticleSystem particl in m_player.GetComponentsInChildren<ParticleSystem>())
         {
             if (particl.isPlaying)

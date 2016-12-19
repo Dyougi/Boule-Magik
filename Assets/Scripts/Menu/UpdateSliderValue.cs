@@ -11,8 +11,6 @@ public class UpdateSliderValue : MonoBehaviour {
     MenuManager.e_sliderType m_sliderType;
 
     OptionManager m_optionManager;
-
-
     Slider m_currentslider;
 
 	void Start ()

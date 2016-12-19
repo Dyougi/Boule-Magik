@@ -31,32 +31,48 @@ public class OptionManager : MonoBehaviour {
     void Start()
     {
         if (PlayerPrefs.HasKey("music"))
+        {
             m_isMusic = PlayerPrefs.GetInt("music");
+            Debug.Log("music set in playerpref = " + m_isMusic);
+        }
         else
         {
             PlayerPrefs.SetInt("music", 1);
             m_isMusic = 1;
+            Debug.Log("music not set in playerpref, set to " + m_isMusic);
         }
         if (PlayerPrefs.HasKey("sound"))
+        {
             m_isSound = PlayerPrefs.GetInt("sound");
+            Debug.Log("sound set in playerpref = " + m_isSound);
+        }
         else
         {
             PlayerPrefs.SetInt("sound", 1);
             m_isSound = 1;
+            Debug.Log("sound not set in playerpref, set to " + m_isSound);
         }
         if (PlayerPrefs.HasKey("speedStart"))
+        {
             m_speedStart = PlayerPrefs.GetFloat("speedStart");
+            Debug.Log("speedStart set in playerpref = " + m_speedStart);
+        }
         else
         {
             PlayerPrefs.SetFloat("speedStart", 4);
             m_speedStart = 4;
+            Debug.Log("speedStart not set in playerpref, set to " + m_speedStart);
         }
         if (PlayerPrefs.HasKey("speedUpdate"))
+        {
             m_speedUpdate = PlayerPrefs.GetFloat("speedUpdate");
+            Debug.Log("speedUpdate set in playerpref = " + m_speedUpdate);
+        }
         else
         {
             PlayerPrefs.SetFloat("speedUpdate", 0.05f);
             m_speedUpdate = 0.05f;
+            Debug.Log("speedUpdate not set in playerpref, set to " + m_speedUpdate);
         }
         isLoaded = true;
     }
