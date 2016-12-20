@@ -28,19 +28,28 @@ public class PlayerController : MonoBehaviour {
     Transform m_roofCheck; // trigger to check if the player is touching a wall
 
     [SerializeField]
+    Transform m_groundCheck; // trigger to check if the player is grounded
+
+    [SerializeField]
     Transform m_raycastX; // Position of the origine of the raycast to see collider on the x axe
 
     [SerializeField]
-    LayerMask m_whatIsWall; // A mask determining what is ground to the character
+    LayerMask m_whatIsWall; // A mask determining what is wall to the character
 
     [SerializeField]
-    LayerMask m_whatIsRoof; // A mask determining what is ground to the character
+    LayerMask m_whatIsRoof; // A mask determining what is roof to the character
 
     [SerializeField]
-    ParticleSystem m_speedBonusPS;
+    LayerMask m_whatIsGround; // A mask determining what is ground to the character
 
     [SerializeField]
-    ParticleSystem m_pointBonusPS;
+    ParticleSystem m_speedUpBonusPS; // Particle for the speed up bonus
+
+    [SerializeField]
+    ParticleSystem m_speedDownBonusPS; // Particle for the speed down bonus
+
+    [SerializeField]
+    ParticleSystem m_pointBonusPS; // Particle for the point bonus
 
     [SerializeField]
     int m_multRotationDefault;
@@ -50,7 +59,8 @@ public class PlayerController : MonoBehaviour {
     AudioSource m_managerAudio;
     Transform m_bouleMagikMesh;
     Rigidbody2D m_rigidbody;
-    ParticleSystem m_currentSpeedParticleSystem;
+    ParticleSystem m_currentSpeedUpParticleSystem;
+    ParticleSystem m_currentSpeedDownParticleSystem;
     ParticleSystem m_currentPointParticleSystem;
     float m_velocityY;
     bool m_canDoubleJump;
@@ -78,7 +88,7 @@ public class PlayerController : MonoBehaviour {
 
     void LateUpdate()
     {
-        RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, LayerMask.NameToLayer("Ground"));
+        RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, m_whatIsWall);
         if (hitX && hitX.distance < 0.5)
             transform.position = new Vector3(transform.position.x - (0.5f - hitX.distance), transform.position.y, transform.position.z);
     }
@@ -88,7 +98,7 @@ public class PlayerController : MonoBehaviour {
         if (!m_isPaused)
         {
             manageInputs();
-            if (m_canDoubleJump == false && m_rigidbody.velocity.y == 0)
+            if (m_canDoubleJump == false && checkIfNear(m_groundCheck.position, m_whatIsGround, 0.1f))
                 m_canDoubleJump = true;
             if (!checkIfNear(m_wallCheck.position, m_whatIsWall, 0.1f) && transform.position.x < m_playerLimit.position.x)
             {
@@ -167,14 +177,20 @@ public class PlayerController : MonoBehaviour {
         Debug.Log("applyBonus " + newBonus.ToString());
         switch (newBonus)
         {
-            case GameManager.e_bonusType.SPEED:
-                m_speedBonusPS.Play();
-                m_currentSpeedParticleSystem = Instantiate(m_speedBonusPS, transform.position, m_speedBonusPS.transform.rotation) as ParticleSystem;
-                m_currentSpeedParticleSystem.transform.parent = gameObject.transform;
+            case GameManager.e_bonusType.SPEEDUP:
+                m_currentSpeedUpParticleSystem = Instantiate(m_speedUpBonusPS, transform.position, m_speedUpBonusPS.transform.rotation) as ParticleSystem;
+                m_currentSpeedUpParticleSystem.transform.parent = gameObject.transform;
                 m_multRotation = 180;
                 m_smoothFactor = 0.5f;
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_bonusSpeedSound);
+                break;
+            case GameManager.e_bonusType.SPEEDDOWN:
+                m_currentSpeedDownParticleSystem = Instantiate(m_speedDownBonusPS, transform.position, m_speedDownBonusPS.transform.rotation) as ParticleSystem;
+                m_currentSpeedDownParticleSystem.transform.parent = gameObject.transform;
+                GameObject.Find("GameManager").GetComponent<GameManager>().updateSpeedScroll(-0.2f);
+                if (m_optionManager.Sound == 1)
+                    m_managerAudio.PlayOneShot(m_bonusPointSound);
                 break;
             case GameManager.e_bonusType.POINT:
                 m_currentPointParticleSystem = Instantiate(m_pointBonusPS, transform.position, m_pointBonusPS.transform.rotation) as ParticleSystem;
@@ -191,13 +207,13 @@ public class PlayerController : MonoBehaviour {
         Debug.Log("removeBonus " + newBonus.ToString());
         switch (newBonus)
         {
-            case GameManager.e_bonusType.SPEED:
-                Destroy(m_currentSpeedParticleSystem);
+            case GameManager.e_bonusType.SPEEDUP:
                 m_multRotation = m_multRotationDefault;
                 m_smoothFactor = m_smoothFactorDefault;
                 break;
+            case GameManager.e_bonusType.SPEEDDOWN:
+                break;
             case GameManager.e_bonusType.POINT:
-                Destroy(m_currentPointParticleSystem);
                 break;
         }
     }

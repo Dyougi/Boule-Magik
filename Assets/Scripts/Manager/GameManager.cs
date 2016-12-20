@@ -10,10 +10,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject[] m_platformsGO; // tab for all platforms
 
-    [Range(0, 100)]
-    [SerializeField]
-    int m_chanceBonus;
-
     [SerializeField]
     float m_spaceBetweenPlatform; // space between platform
 
@@ -74,9 +70,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject m_menuButton; // the menu button to get back to the menu scene when the player lose
 
-    public enum e_bonusType { SPEED, POINT }
+    public enum e_bonusType { SPEEDUP, SPEEDDOWN, POINT }
 
-    OptionManager m_optionManager;
+    OptionManager m_optionManager; // Reference to the singleton Option Manager
 
     List<GameObject> m_platformTab; // list of platforms instanciated
     GameObject currentPlatform; // the current platform handled
@@ -112,7 +108,7 @@ public class GameManager : MonoBehaviour
                 m_timeBetweenTwoInstancePlatform = 0;
                 m_countTab = Random.Range(0, m_platformsGO.Length);
                 currentPlatform = Instantiate(m_platformsGO[m_countTab], m_spawnPlatform.position, Quaternion.identity) as GameObject;
-                currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll, m_chanceBonus);
+                currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll);
                 m_sizePlatformSave = currentPlatform.GetComponent<Platform>().WidthSize;
                 m_platformTab.Add(currentPlatform);
                 updateSpeedScroll(m_updateSpeedScroll);

@@ -1,10 +1,9 @@
 # =============== #
 # Unity generated #
 # =============== #
-[Tt]emp/
-[Oo]bj/
-[Bb]uild
-/[Ll]ibrary/
+$PROJDIR/Temp/
+$PROJDIR/Library/
+$PROJDIR/Obj/
 sysinfo.txt
 *.stackdump
  
