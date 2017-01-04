@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
             m_musicManager.Play();
         m_startSpeedScroll = m_optionManager.SpeedStart;
         m_updateSpeedScroll = m_optionManager.Speedupdate;
-        initGame();
+        InitGame();
     }
 
     void Update()
@@ -108,10 +108,10 @@ public class GameManager : MonoBehaviour
                 m_timeBetweenTwoInstancePlatform = 0;
                 m_countTab = Random.Range(0, m_platformsGO.Length);
                 currentPlatform = Instantiate(m_platformsGO[m_countTab], m_spawnPlatform.position, Quaternion.identity) as GameObject;
-                currentPlatform.GetComponent<Platform>().initPlatform(m_speedScroll);
+                currentPlatform.GetComponent<Platform>().InitPlatform(m_speedScroll);
                 m_sizePlatformSave = currentPlatform.GetComponent<Platform>().WidthSize;
                 m_platformTab.Add(currentPlatform);
-                updateSpeedScroll(m_updateSpeedScroll);
+                UpdateSpeedScroll(m_updateSpeedScroll);
                 Debug.Log("Instance platform : " + currentPlatform.name + ", speed scroll : " + m_speedScroll);
             }
             m_timeBetweenTwoInstancePlatform += Time.deltaTime * m_speedScroll;
@@ -128,24 +128,22 @@ public class GameManager : MonoBehaviour
 
     // PRIVATE METHODES
 
-    void initGame()
+    void InitGame()
     {
         m_countTab = 0; // tab platform count;
         m_isPaused = false; // game paused ?
         m_isLose = false; // lose state
         m_points = 0; // point number
         currentPlatform = null; // instance variable for current platform
-        updateSpeedScroll(m_startSpeedScroll); // set default speed scroll
-        updatePoint(m_points); // set default point
-        m_firstFloor.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll); // set default speed for level transtaltion
-        m_secondFloor.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll); // set default speed for level transtaltion
-        m_firstBackground.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll); // set default speed for level transtaltion
-        m_secondBackground.GetComponent<ScrollingEntity>().initEntity(m_startSpeedScroll); // set default speed for level transtaltion
+        UpdateSpeedScroll(m_startSpeedScroll); // set default speed scroll
+        UpdatePoint(m_points); // set default point
+        m_firstFloor.GetComponent<ScrollingEntity>().InitEntity(m_startSpeedScroll); // set default speed for level transtaltion
+        m_secondFloor.GetComponent<ScrollingEntity>().InitEntity(m_startSpeedScroll); // set default speed for level transtaltion
+        m_firstBackground.GetComponent<ScrollingEntity>().InitEntity(m_startSpeedScroll); // set default speed for level transtaltion
+        m_secondBackground.GetComponent<ScrollingEntity>().InitEntity(m_startSpeedScroll); // set default speed for level transtaltion
         m_speedScroll = m_startSpeedScroll; // set default speed for level transtaltion
         m_timeBetweenTwoInstancePlatform = 0; // set the default value for the time passed between two instance of platform
         m_sizePlatformSave = m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform; // set default value for variable of the save of size of current platform
-        if (!PlayerPrefs.HasKey("score"))
-            PlayerPrefs.SetInt("score", 0);
     }
 
     // PUBLIC METHODES
@@ -164,13 +162,13 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void updatePoint(int addedPoint)
+    public void UpdatePoint(int addedPoint)
     {
         m_points += addedPoint;
         m_uiPoint.text = m_points.ToString();
     }
 
-    public void updateSpeedScroll(float newSpeed)
+    public void UpdateSpeedScroll(float newSpeed)
     {
         m_speedScroll += newSpeed;
         foreach (GameObject obj in m_platformTab)
@@ -183,7 +181,7 @@ public class GameManager : MonoBehaviour
         m_secondFloor.GetComponent<ScrollingEntity>().Speed = m_speedScroll;
     }
 
-    public void pause(bool pause)
+    public void UpdatePause(bool pause)
     {
         foreach (GameObject obj in m_platformTab)
             if (obj != null)
@@ -196,7 +194,7 @@ public class GameManager : MonoBehaviour
         Pause = pause;
     }
 
-    public void pauseButtonPressed(Image buttonImage)
+    public void PauseButtonPressed(Image buttonImage)
     {
         buttonImage.sprite = m_isPaused == false ? m_playSprite : m_pauseSprite;
         if (m_optionManager.Music == 1)
@@ -206,10 +204,10 @@ public class GameManager : MonoBehaviour
             else
                 m_musicManager.Pause();
         }
-        pause(!m_isPaused);
+        UpdatePause(!m_isPaused);
     }
 
-    public void lose()
+    public void Lose()
     {
         if (PlayerPrefs.GetInt("score") < m_points)
         {
@@ -217,7 +215,7 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.Save();
         }
         m_pauseButton.SetActive(false);
-        pause(true);
+        UpdatePause(true);
         m_isLose = true;
         if (m_optionManager.Sound == 1)
             m_soundManager.PlayOneShot(m_loseSound);
@@ -232,15 +230,15 @@ public class GameManager : MonoBehaviour
         timeWhenLose = Time.time;
     }
 
-    public void restartGame()
+    public void RestartGame()
     {
         foreach (GameObject obj in m_platformTab)
             Destroy(obj);
-        m_player.GetComponent<PlayerController>().resetPlayer();
-        initGame();
+        m_player.GetComponent<PlayerController>().ResetPlayer();
+        InitGame();
         if (m_optionManager.Music == 1)
             m_musicManager.Play();
-        pause(false);
+        UpdatePause(false);
         m_retryButton.SetActive(false);
         m_menuButton.SetActive(false);
         m_pauseButton.SetActive(true);

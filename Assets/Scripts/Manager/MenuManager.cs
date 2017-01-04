@@ -45,6 +45,7 @@ public class MenuManager : MonoBehaviour {
     static float m_speedStartDefaultValue = 4;
     static float m_speedUpdateDefaultValue = 0.05f;
     bool m_isOption;
+    float m_scorePrinted;
 
     void Start()
     {
@@ -52,25 +53,25 @@ public class MenuManager : MonoBehaviour {
         m_audioSource = GetComponent<AudioSource>();
         m_optionManager = OptionManager.Instance;
         m_hightScore = PlayerPrefs.GetInt("score");
-        m_scoreText.text += m_hightScore.ToString();
+        m_scorePrinted = -1;
     }
 
     void Update()
     {
-        if (m_hightScore != PlayerPrefs.GetInt("score"))
-            m_scoreText.text += m_hightScore.ToString();
+        if (m_optionManager != null && m_optionManager.Score != m_scorePrinted)
+            m_scoreText.text = "Best score : " + m_hightScore.ToString();
         if (m_optionManager != null && m_optionManager.Music == 1 && !m_audioSource.isPlaying)
             m_audioSource.Play();
         if (m_optionManager != null && m_optionManager.Music == 0 && m_audioSource.isPlaying)
             m_audioSource.Stop();
     }
 
-    public void launchGame()
+    public void LaunchGame()
     {
         SceneManager.LoadScene("MainScene");
     }
 
-    public void switchMenu()
+    public void SwitchMenu()
     {
         if (m_isOption) // Main menu
         {
@@ -87,7 +88,7 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    public void resetValues()
+    public void ResetValues()
     {
         m_music.isOn = true;
         m_sound.isOn = true;

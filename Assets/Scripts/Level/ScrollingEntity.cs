@@ -54,7 +54,7 @@ public class ScrollingEntity : MonoBehaviour
             m_speedTranslate = value;
         }
     }
-    public void initEntity(float newSpeed)
+    public void InitEntity(float newSpeed)
     {
         m_speedTranslate = newSpeed;
     }

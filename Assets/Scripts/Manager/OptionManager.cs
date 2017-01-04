@@ -8,6 +8,7 @@ public class OptionManager : MonoBehaviour {
     float m_speedStart;
     float m_speedUpdate;
     bool isLoaded = false;
+    float m_hightScore;
 
     private static OptionManager instance;
 
@@ -30,6 +31,17 @@ public class OptionManager : MonoBehaviour {
 
     void Start()
     {
+        if (PlayerPrefs.HasKey("score"))
+        {
+            m_hightScore = PlayerPrefs.GetFloat("score");
+            Debug.Log("score get in playerpref = " + m_hightScore);
+        }
+        else
+        {
+            m_hightScore = 0;
+            Debug.Log("score set in playerpref = " + 0);
+        }
+
         if (PlayerPrefs.HasKey("music"))
         {
             m_isMusic = PlayerPrefs.GetInt("music");
@@ -80,6 +92,21 @@ public class OptionManager : MonoBehaviour {
     public void saveOption()
     {
         PlayerPrefs.Save();
+    }
+
+    public float Score
+    {
+        get
+        {
+            return m_hightScore;
+        }
+
+        set
+        {
+            m_hightScore = value;
+            PlayerPrefs.SetFloat("score", m_hightScore);
+            Debug.Log("OptionManager score set to " + m_hightScore);
+        }
     }
 
     public int Music

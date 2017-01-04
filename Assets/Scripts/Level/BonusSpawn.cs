@@ -14,7 +14,7 @@ public class BonusSpawn : MonoBehaviour {
     void Start () {
         if (m_bonusArray.Length > 0)
         {
-            if (Tools.throwOfDice(m_chanceBonus))
+            if (Tools.ThrowOfDice(m_chanceBonus))
             {
                 int nbrRand = Random.Range(0, m_bonusArray.Length);
                 GameObject instance = Instantiate(m_bonusArray[nbrRand], transform.position, Quaternion.identity) as GameObject;

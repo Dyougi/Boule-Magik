@@ -24,7 +24,7 @@ public class Platform : MonoBehaviour
         {
             if (m_endEntity.position.x <= m_unspawnEntity.position.x)
             {
-                GameObject.Find("GameManager").GetComponent<GameManager>().updatePoint(PointGived);
+                GameObject.Find("GameManager").GetComponent<GameManager>().UpdatePoint(PointGived);
                 Destroy(gameObject);
             }
             transform.Translate(new Vector3(-m_speedTranslate * Time.deltaTime, 0, 0));
@@ -75,7 +75,7 @@ public class Platform : MonoBehaviour
         }
     }
 
-    public void initPlatform(float newSpeed)
+    public void InitPlatform(float newSpeed)
     {
         m_speedTranslate = newSpeed;
     }

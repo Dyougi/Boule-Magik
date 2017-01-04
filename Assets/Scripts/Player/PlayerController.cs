@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.ComponentModel;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour {
@@ -81,9 +82,9 @@ public class PlayerController : MonoBehaviour {
         Transform[] tabTransform =  GetComponentsInChildren<Transform>();
         m_bouleMagikMesh = tabTransform[1];
         m_positionDefault = transform.position;
-        Bonus.OnBonusOn += applyBonus;
-        Bonus.OnBonusOff += removeBonus;
-        resetPlayer();
+        Bonus.OnBonusOn += ApplyBonus;
+        Bonus.OnBonusOff += RemoveBonus;
+        ResetPlayer();
     }
 
     void LateUpdate()
@@ -97,10 +98,10 @@ public class PlayerController : MonoBehaviour {
     {
         if (!m_isPaused)
         {
-            manageInputs();
-            if (m_canDoubleJump == false && checkIfNear(m_groundCheck.position, m_whatIsGround, 0.1f))
+            ManageInputs();
+            if (m_canDoubleJump == false && CheckIfNear(m_groundCheck.position, m_whatIsGround, 0.1f))
                 m_canDoubleJump = true;
-            if (!checkIfNear(m_wallCheck.position, m_whatIsWall, 0.1f) && transform.position.x < m_playerLimit.position.x)
+            if (!CheckIfNear(m_wallCheck.position, m_whatIsWall, 0.1f) && transform.position.x < m_playerLimit.position.x)
             {
                 transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);
                 m_bouleMagikMesh.Rotate(new Vector3(0, 0, -(m_multRotation * m_speedScroll * Time.deltaTime)));
@@ -113,11 +114,11 @@ public class PlayerController : MonoBehaviour {
         if (other.tag == "loseTrigger")
         {
             Debug.Log("Lose !");
-            GameObject.Find("GameManager").GetComponent<GameManager>().lose();
+            GameObject.Find("GameManager").GetComponent<GameManager>().Lose();
         }
     }
 
-    bool checkIfNear(Vector3 position, LayerMask whatIs, float range)
+    bool CheckIfNear(Vector3 position, LayerMask whatIs, float range)
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(position, range, whatIs);
         for (int i = 0; i < colliders.Length; i++)
@@ -128,7 +129,7 @@ public class PlayerController : MonoBehaviour {
 
     // PRIVATE METHODES
 
-    void manageInputs()
+    void ManageInputs()
     {
 #if UNITY_ANDROID
 
@@ -143,14 +144,14 @@ public class PlayerController : MonoBehaviour {
 #if UNITY_EDITOR
         if (Input.GetButtonDown("Jump"))
         {
-            doJump();
+            DoJump();
         }
 #endif
     }
 
-    void doJump()
+    void DoJump()
     {
-        if (!checkIfNear(m_roofCheck.position, m_whatIsRoof, 0.1f))
+        if (!CheckIfNear(m_roofCheck.position, m_whatIsRoof, 0.1f))
         {
             if (m_rigidbody.velocity.y == 0)
             {
@@ -172,7 +173,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    void applyBonus(GameManager.e_bonusType newBonus)
+    void ApplyBonus(GameManager.e_bonusType newBonus)
     {
         Debug.Log("applyBonus " + newBonus.ToString());
         switch (newBonus)
@@ -188,7 +189,8 @@ public class PlayerController : MonoBehaviour {
             case GameManager.e_bonusType.SPEEDDOWN:
                 m_currentSpeedDownParticleSystem = Instantiate(m_speedDownBonusPS, transform.position, m_speedDownBonusPS.transform.rotation) as ParticleSystem;
                 m_currentSpeedDownParticleSystem.transform.parent = gameObject.transform;
-                GameObject.Find("GameManager").GetComponent<GameManager>().updateSpeedScroll(-0.2f);
+                if (m_speedScroll - 0.2f > m_optionManager.SpeedStart)
+                    GameObject.Find("GameManager").GetComponent<GameManager>().UpdateSpeedScroll(-0.2f);
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_bonusPointSound);
                 break;
@@ -197,12 +199,12 @@ public class PlayerController : MonoBehaviour {
                 m_currentPointParticleSystem.transform.parent = gameObject.transform;
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_bonusPointSound);
-                GameObject.Find("GameManager").GetComponent<GameManager>().updatePoint(3);
+                GameObject.Find("GameManager").GetComponent<GameManager>().UpdatePoint(3);
                 break;
         }
     }
 
-    void removeBonus(GameManager.e_bonusType newBonus)
+    void RemoveBonus(GameManager.e_bonusType newBonus)
     {
         Debug.Log("removeBonus " + newBonus.ToString());
         switch (newBonus)
@@ -222,7 +224,7 @@ public class PlayerController : MonoBehaviour {
     // PUBLIC METHODES
 
 
-    public void resetPlayer()
+    public void ResetPlayer()
     {
         Debug.Log("Reset player");
         m_smoothFactor = m_smoothFactorDefault;

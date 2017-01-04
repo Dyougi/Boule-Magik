@@ -3,7 +3,7 @@ using System.Collections;
 
 public static class Tools
 {
-    public static bool throwOfDice(int percentage)
+    public static bool ThrowOfDice(int percentage)
     {
         if (Random.Range(0, 100) < percentage)
             return true;
