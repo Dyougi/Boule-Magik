@@ -187,7 +187,7 @@ public class PlayerController : MonoBehaviour {
                     m_managerAudio.PlayOneShot(m_bonusSpeedSound);
                 break;
             case GameManager.e_bonusType.SPEEDDOWN:
-                m_currentSpeedDownParticleSystem = Instantiate(m_speedDownBonusPS, transform.position, m_speedDownBonusPS.transform.rotation) as ParticleSystem;
+                m_currentSpeedDownParticleSystem = Instantiate(m_speedDownBonusPS, new Vector3(transform.position.x, transform.position.y, transform.position.z +0.1f), m_speedDownBonusPS.transform.rotation) as ParticleSystem;
                 m_currentSpeedDownParticleSystem.transform.parent = gameObject.transform;
                 if (m_speedScroll - 0.2f > m_optionManager.SpeedStart)
                     GameObject.Find("GameManager").GetComponent<GameManager>().UpdateSpeedScroll(-0.2f);

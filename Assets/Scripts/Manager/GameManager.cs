@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviour
     Text m_uiPoint; // the Text from the GUI to show points
 
     [SerializeField]
+    Text m_uiSpeed; // the Text from the GUI to show points
+
+    [SerializeField]
     AudioSource m_musicManager; // audio source for music
 
     [SerializeField]
@@ -165,12 +168,13 @@ public class GameManager : MonoBehaviour
     public void UpdatePoint(int addedPoint)
     {
         m_points += addedPoint;
-        m_uiPoint.text = m_points.ToString();
+        m_uiPoint.text = "Point: " + m_points.ToString();
     }
 
     public void UpdateSpeedScroll(float newSpeed)
     {
         m_speedScroll += newSpeed;
+        m_uiSpeed.text = "Speed: " + m_speedScroll.ToString("0"); ;
         foreach (GameObject obj in m_platformTab)
             if (obj != null)
                 obj.GetComponent<Platform>().Speed = m_speedScroll;
@@ -209,9 +213,14 @@ public class GameManager : MonoBehaviour
 
     public void Lose()
     {
-        if (PlayerPrefs.GetInt("score") < m_points)
+        if (PlayerPrefs.GetInt("pointScore") < m_points)
         {
-            PlayerPrefs.SetInt("score", m_points);
+            PlayerPrefs.SetInt("pointScore", m_points);
+            PlayerPrefs.Save();
+        }
+        if (PlayerPrefs.GetFloat("speedScore") < m_speedScroll)
+        {
+            PlayerPrefs.SetFloat("speedScore", m_speedScroll);
             PlayerPrefs.Save();
         }
         m_pauseButton.SetActive(false);

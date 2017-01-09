@@ -9,6 +9,7 @@ public class OptionManager : MonoBehaviour {
     float m_speedUpdate;
     bool isLoaded = false;
     float m_hightScore;
+    float m_speedScore;
 
     private static OptionManager instance;
 
@@ -31,15 +32,28 @@ public class OptionManager : MonoBehaviour {
 
     void Start()
     {
-        if (PlayerPrefs.HasKey("score"))
+        if (PlayerPrefs.HasKey("pointScore"))
         {
-            m_hightScore = PlayerPrefs.GetFloat("score");
-            Debug.Log("score get in playerpref = " + m_hightScore);
+            m_hightScore = PlayerPrefs.GetFloat("pointScore");
+            Debug.Log("pointScore get in playerpref = " + m_hightScore);
         }
         else
         {
+            PlayerPrefs.SetFloat("pointScore", 0);
             m_hightScore = 0;
-            Debug.Log("score set in playerpref = " + 0);
+            Debug.Log("pointScore set in playerpref = " + 0);
+        }
+
+        if (PlayerPrefs.HasKey("speedScore"))
+        {
+            m_speedScore = PlayerPrefs.GetFloat("speedScore");
+            Debug.Log("speedScore get in playerpref = " + m_speedScore);
+        }
+        else
+        {
+            PlayerPrefs.SetFloat("speedScore", 0);
+            m_speedScore = 0;
+            Debug.Log("speedScore set in playerpref = " + 0);
         }
 
         if (PlayerPrefs.HasKey("music"))
@@ -53,6 +67,7 @@ public class OptionManager : MonoBehaviour {
             m_isMusic = 1;
             Debug.Log("music not set in playerpref, set to " + m_isMusic);
         }
+
         if (PlayerPrefs.HasKey("sound"))
         {
             m_isSound = PlayerPrefs.GetInt("sound");
@@ -64,6 +79,7 @@ public class OptionManager : MonoBehaviour {
             m_isSound = 1;
             Debug.Log("sound not set in playerpref, set to " + m_isSound);
         }
+
         if (PlayerPrefs.HasKey("speedStart"))
         {
             m_speedStart = PlayerPrefs.GetFloat("speedStart");
@@ -75,7 +91,8 @@ public class OptionManager : MonoBehaviour {
             m_speedStart = 4;
             Debug.Log("speedStart not set in playerpref, set to " + m_speedStart);
         }
-        if (PlayerPrefs.HasKey("speedUpdate"))
+
+        /*if (PlayerPrefs.HasKey("speedUpdate"))
         {
             m_speedUpdate = PlayerPrefs.GetFloat("speedUpdate");
             Debug.Log("speedUpdate set in playerpref = " + m_speedUpdate);
@@ -85,7 +102,7 @@ public class OptionManager : MonoBehaviour {
             PlayerPrefs.SetFloat("speedUpdate", 0.05f);
             m_speedUpdate = 0.05f;
             Debug.Log("speedUpdate not set in playerpref, set to " + m_speedUpdate);
-        }
+        }*/
         isLoaded = true;
     }
 
@@ -104,8 +121,23 @@ public class OptionManager : MonoBehaviour {
         set
         {
             m_hightScore = value;
-            PlayerPrefs.SetFloat("score", m_hightScore);
-            Debug.Log("OptionManager score set to " + m_hightScore);
+            PlayerPrefs.SetFloat("pointScore", m_hightScore);
+            Debug.Log("OptionManager pointScore set to " + m_hightScore);
+        }
+    }
+
+    public float SpeedScore
+    {
+        get
+        {
+            return m_speedScore;
+        }
+
+        set
+        {
+            m_speedScore = value;
+            PlayerPrefs.SetFloat("speedScore", m_speedScore);
+            Debug.Log("OptionManager speedScore set to " + m_speedScore);
         }
     }
 
