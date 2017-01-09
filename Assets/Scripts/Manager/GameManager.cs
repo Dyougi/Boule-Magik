@@ -174,7 +174,7 @@ public class GameManager : MonoBehaviour
     public void UpdateSpeedScroll(float newSpeed)
     {
         m_speedScroll += newSpeed;
-        m_uiSpeed.text = "Speed: " + m_speedScroll.ToString("0"); ;
+        m_uiSpeed.text = "Speed: " + m_speedScroll.ToString("0.0"); ;
         foreach (GameObject obj in m_platformTab)
             if (obj != null)
                 obj.GetComponent<Platform>().Speed = m_speedScroll;
@@ -253,7 +253,7 @@ public class GameManager : MonoBehaviour
         m_pauseButton.SetActive(true);
     }
 
-    public void goMenu()
+    public void GoMenu()
     {
         SceneManager.LoadScene("Menu");
     }

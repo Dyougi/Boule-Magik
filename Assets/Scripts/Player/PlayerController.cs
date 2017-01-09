@@ -187,7 +187,7 @@ public class PlayerController : MonoBehaviour {
                     m_managerAudio.PlayOneShot(m_bonusSpeedSound);
                 break;
             case GameManager.e_bonusType.SPEEDDOWN:
-                m_currentSpeedDownParticleSystem = Instantiate(m_speedDownBonusPS, new Vector3(transform.position.x, transform.position.y, transform.position.z +0.1f), m_speedDownBonusPS.transform.rotation) as ParticleSystem;
+                m_currentSpeedDownParticleSystem = Instantiate(m_speedDownBonusPS, new Vector3(transform.position.x, transform.position.y, transform.position.z + 0.1f), m_speedDownBonusPS.transform.rotation) as ParticleSystem;
                 m_currentSpeedDownParticleSystem.transform.parent = gameObject.transform;
                 if (m_speedScroll - 0.2f > m_optionManager.SpeedStart)
                     GameObject.Find("GameManager").GetComponent<GameManager>().UpdateSpeedScroll(-0.2f);
@@ -212,10 +212,13 @@ public class PlayerController : MonoBehaviour {
             case GameManager.e_bonusType.SPEEDUP:
                 m_multRotation = m_multRotationDefault;
                 m_smoothFactor = m_smoothFactorDefault;
+                Destroy(m_currentSpeedUpParticleSystem);
                 break;
             case GameManager.e_bonusType.SPEEDDOWN:
+                Destroy(m_currentSpeedDownParticleSystem);
                 break;
             case GameManager.e_bonusType.POINT:
+                Destroy(m_currentPointParticleSystem);
                 break;
         }
     }

@@ -103,6 +103,7 @@ public class OptionManager : MonoBehaviour {
             m_speedUpdate = 0.05f;
             Debug.Log("speedUpdate not set in playerpref, set to " + m_speedUpdate);
         }*/
+        saveOption();
         isLoaded = true;
     }
 
