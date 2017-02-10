@@ -212,13 +212,13 @@ public class PlayerController : MonoBehaviour {
             case GameManager.e_bonusType.SPEEDUP:
                 m_multRotation = m_multRotationDefault;
                 m_smoothFactor = m_smoothFactorDefault;
-                Destroy(m_currentSpeedUpParticleSystem);
+                //Destroy(m_currentSpeedUpParticleSystem);
                 break;
             case GameManager.e_bonusType.SPEEDDOWN:
-                Destroy(m_currentSpeedDownParticleSystem);
+                //Destroy(m_currentSpeedDownParticleSystem);
                 break;
             case GameManager.e_bonusType.POINT:
-                Destroy(m_currentPointParticleSystem);
+                //Destroy(m_currentPointParticleSystem);
                 break;
         }
     }

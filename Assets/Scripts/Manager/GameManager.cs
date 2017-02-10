@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
         if (m_optionManager.Music == 1)
             m_musicManager.Play();
         m_startSpeedScroll = m_optionManager.SpeedStart;
-        m_updateSpeedScroll = m_optionManager.Speedupdate;
+        //m_updateSpeedScroll = m_optionManager.Speedupdate;
         InitGame();
     }
 
@@ -174,7 +174,7 @@ public class GameManager : MonoBehaviour
     public void UpdateSpeedScroll(float newSpeed)
     {
         m_speedScroll += newSpeed;
-        m_uiSpeed.text = "Speed: " + m_speedScroll.ToString("0.0"); ;
+        m_uiSpeed.text = "Speed: " + m_speedScroll.ToString("0.0");
         foreach (GameObject obj in m_platformTab)
             if (obj != null)
                 obj.GetComponent<Platform>().Speed = m_speedScroll;
