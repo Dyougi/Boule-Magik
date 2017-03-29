@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour {
 
@@ -57,6 +56,8 @@ public class PlayerController : MonoBehaviour {
 
     OptionManager m_optionManager;
 
+    List<BonusApplied> m_bonusList;
+
     AudioSource m_managerAudio;
     Transform m_bouleMagikMesh;
     Rigidbody2D m_rigidbody;
@@ -65,7 +66,7 @@ public class PlayerController : MonoBehaviour {
     ParticleSystem m_currentPointParticleSystem;
     float m_velocityY;
     bool m_canDoubleJump;
-    Vector2 m_positionDefault;
+    Vector3 m_positionDefault;
     float m_speedScroll;
     float m_smoothFactor;
     int m_multRotation;
@@ -76,14 +77,13 @@ public class PlayerController : MonoBehaviour {
 
     
     void Start () {
+        m_bonusList = new List<BonusApplied>();
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_managerAudio = GetComponent<AudioSource>();
         m_optionManager = OptionManager.Instance;
         Transform[] tabTransform =  GetComponentsInChildren<Transform>();
         m_bouleMagikMesh = tabTransform[1];
         m_positionDefault = transform.position;
-        Bonus.OnBonusOn += ApplyBonus;
-        Bonus.OnBonusOff += RemoveBonus;
         ResetPlayer();
     }
 
@@ -99,12 +99,27 @@ public class PlayerController : MonoBehaviour {
         if (!m_isPaused)
         {
             ManageInputs();
+
+            // Manage double jump conditions
             if (m_canDoubleJump == false && CheckIfNear(m_groundCheck.position, m_whatIsGround, 0.1f))
                 m_canDoubleJump = true;
+
+            // Manage the movement and rotation of the player
             if (!CheckIfNear(m_wallCheck.position, m_whatIsWall, 0.1f) && transform.position.x < m_playerLimit.position.x)
             {
                 transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);
                 m_bouleMagikMesh.Rotate(new Vector3(0, 0, -(m_multRotation * m_speedScroll * Time.deltaTime)));
+            }
+
+            // Manage the bonus
+
+            foreach (BonusApplied item in m_bonusList)
+            {
+                if (item.m_startBonusTime + item.m_bonusTime > MyTimer.Instance.TotalTime)
+                {
+                    RemoveBonus(item.m_bonusType);
+                    m_bonusList.Remove(item);
+                }
             }
         }
     }
@@ -115,6 +130,13 @@ public class PlayerController : MonoBehaviour {
         {
             Debug.Log("Lose !");
             GameObject.Find("GameManager").GetComponent<GameManager>().Lose();
+        }
+        if (other.tag == "bonus")
+        {
+            Destroy(other.gameObject);
+            ApplyBonus(other.gameObject.GetComponent<Bonus>().BonusType);
+            BonusApplied newBonus = new BonusApplied(other.gameObject.GetComponent<Bonus>().BonusTime, other.gameObject.GetComponent<Bonus>().BonusType);
+            m_bonusList.Add(newBonus);
         }
     }
 

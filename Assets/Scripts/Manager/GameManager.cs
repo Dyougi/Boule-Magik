@@ -195,6 +195,7 @@ public class GameManager : MonoBehaviour
         m_secondBackground.GetComponent<ScrollingEntity>().Pause = pause;
         m_firstFloor.GetComponent<ScrollingEntity>().Pause = pause;
         m_secondFloor.GetComponent<ScrollingEntity>().Pause = pause;
+        MyTimer.Instance.Pause = pause;
         Pause = pause;
     }
 
