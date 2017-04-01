@@ -8,7 +8,9 @@ public class OptionManager : MonoBehaviour {
     float m_speedStart;
     float m_speedUpdate;
     bool isLoaded = false;
+    [SerializeField]
     float m_hightScore;
+    [SerializeField]
     float m_speedScore;
 
     private static OptionManager instance;
@@ -34,12 +36,12 @@ public class OptionManager : MonoBehaviour {
     {
         if (PlayerPrefs.HasKey("pointScore"))
         {
-            m_hightScore = PlayerPrefs.GetFloat("pointScore");
+            m_hightScore = PlayerPrefs.GetInt("pointScore");
             Debug.Log("pointScore get in playerpref = " + m_hightScore);
         }
         else
         {
-            PlayerPrefs.SetFloat("pointScore", 0);
+            PlayerPrefs.SetInt("pointScore", 0);
             m_hightScore = 0;
             Debug.Log("pointScore set in playerpref = " + 0);
         }

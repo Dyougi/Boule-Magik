@@ -22,10 +22,4 @@ public class Bonus : MonoBehaviour {
             return m_bonusType;
         }
     }
-
-    public void InitBonus(GameManager.e_bonusType type, float time)
-    {
-        m_bonusType = type;
-        m_bonusTime = time;
-    }
 }

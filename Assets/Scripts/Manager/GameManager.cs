@@ -189,7 +189,17 @@ public class GameManager : MonoBehaviour
     {
         foreach (GameObject obj in m_platformTab)
             if (obj != null)
+            {
                 obj.GetComponent<Platform>().Pause = pause;
+                Animation[] anims = obj.GetComponentsInChildren<Animation>();
+                foreach (Animation item in anims)
+                {
+                    if (pause)
+                        item["Bonus"].speed = 0;
+                    else
+                        item["Bonus"].speed = 1;
+                }
+            }
         m_player.GetComponent<PlayerController>().Pause = pause;
         m_firstBackground.GetComponent<ScrollingEntity>().Pause = pause;
         m_secondBackground.GetComponent<ScrollingEntity>().Pause = pause;
@@ -216,11 +226,13 @@ public class GameManager : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("pointScore") < m_points)
         {
+            m_optionManager.Score = m_points;
             PlayerPrefs.SetInt("pointScore", m_points);
             PlayerPrefs.Save();
         }
         if (PlayerPrefs.GetFloat("speedScore") < m_speedScroll)
         {
+            m_optionManager.SpeedScore = m_speedScroll;
             PlayerPrefs.SetFloat("speedScore", m_speedScroll);
             PlayerPrefs.Save();
         }
