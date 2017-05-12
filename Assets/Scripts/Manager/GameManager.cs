@@ -73,7 +73,10 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject m_menuButton; // the menu button to get back to the menu scene when the player lose
 
-    public enum e_bonusType { SPEEDUP, SPEEDDOWN, POINT }
+    [SerializeField]
+    GameObject m_superPowerButton; // the button for the super power
+
+    public enum e_bonusType { SPEEDUP, SCROLLDOWN, SCROLLUP, POINT, SUPERPOWER }
 
     OptionManager m_optionManager; // Reference to the singleton Option Manager
 
@@ -86,7 +89,8 @@ public class GameManager : MonoBehaviour
     int m_countTab; // count set randomly to instance a random platform
     bool m_isPaused; // is game paused ?
     bool m_isLose; // is the game lost ?
-    float timeWhenLose; // the moment the player lost
+    float m_timeWhenLose; // the moment the player lost
+    bool m_isSuperPowerUp;
 
     // UNITY METHODES
 
@@ -121,7 +125,7 @@ public class GameManager : MonoBehaviour
         }
         if (m_isLose)
         {
-            if (timeWhenLose + 1 < Time.time)
+            if (m_timeWhenLose + 1 < Time.time)
             {
                 m_retryButton.SetActive(true);
                 m_menuButton.SetActive(true);
@@ -147,6 +151,10 @@ public class GameManager : MonoBehaviour
         m_speedScroll = m_startSpeedScroll; // set default speed for level transtaltion
         m_timeBetweenTwoInstancePlatform = 0; // set the default value for the time passed between two instance of platform
         m_sizePlatformSave = m_timeBetweenTwoInstancePlatform - m_spaceBetweenPlatform; // set default value for variable of the save of size of current platform
+        /*Image tempImage = m_superPowerButton.GetComponent<Image>();
+        Color tempColor = new Color(tempImage.color.r, tempImage.color.g, tempImage.color.b, 50);
+        m_superPowerButton.GetComponent<Image>().color = tempColor;*/
+        DesactivateSuperPowerButton();
     }
 
     // PUBLIC METHODES
@@ -222,6 +230,31 @@ public class GameManager : MonoBehaviour
         UpdatePause(!m_isPaused);
     }
 
+    public void ActivateSuperPowerButton()
+    {
+        m_superPowerButton.SetActive(true);
+        /*Image tempImage = m_superPowerButton.GetComponent<Image>();
+        Color tempColor = new Color(tempImage.color.r, tempImage.color.g, tempImage.color.b, 255);
+        m_superPowerButton.GetComponent<Image>().color = tempColor;*/
+    }
+
+    public void DesactivateSuperPowerButton()
+    {
+        m_superPowerButton.SetActive(false);
+        /*Image tempImage = m_superPowerButton.GetComponent<Image>();
+        Color tempColor = new Color(tempImage.color.r, tempImage.color.g, tempImage.color.b, 50);
+        m_superPowerButton.GetComponent<Image>().color = tempColor;*/
+    }
+
+    public void SuperPowerButtonPressed()
+    {
+        foreach (GameObject obj in m_platformTab)
+            if (obj != null)
+                StartCoroutine(obj.GetComponent<Platform>().Fade());
+        DesactivateSuperPowerButton();
+        m_player.GetComponent<PlayerController>().SuperPowerUsed();
+    }
+
     public void Lose()
     {
         if (PlayerPrefs.GetInt("pointScore") < m_points)
@@ -230,7 +263,7 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("pointScore", m_points);
             PlayerPrefs.Save();
         }
-        if (PlayerPrefs.GetFloat("speedScore") < m_speedScroll)
+        if (PlayerPrefs.GetFloat("speedScore") < m_speedScroll && m_startSpeedScroll == 4)
         {
             m_optionManager.SpeedScore = m_speedScroll;
             PlayerPrefs.SetFloat("speedScore", m_speedScroll);
@@ -249,7 +282,7 @@ public class GameManager : MonoBehaviour
                 particl.Stop();
         }
         Instantiate(m_deathParticleSystem, m_player.transform.position, m_deathParticleSystem.transform.rotation);
-        timeWhenLose = Time.time;
+        m_timeWhenLose = Time.time;
     }
 
     public void RestartGame()

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour {
 
@@ -10,7 +11,10 @@ public class PlayerController : MonoBehaviour {
     AudioClip m_bonusSpeedUpSound; // bonus speed up sound !
 
     [SerializeField]
-    AudioClip m_bonusSpeedDownSound; // bonus point down sound !
+    AudioClip m_bonusScrollDownSound; // bonus point down sound !
+
+    [SerializeField]
+    AudioClip m_bonusScrollUpSound; // bonus point up sound !
 
     [SerializeField]
     AudioClip m_bonusPointSound; // bonus point sound !
@@ -37,6 +41,12 @@ public class PlayerController : MonoBehaviour {
     Transform m_raycastX; // Position of the origine of the raycast to see collider on the x axe
 
     [SerializeField]
+    Transform m_raycastY; // Position of the origine of the raycast to see collider on the y axe
+
+    [SerializeField]
+    Transform m_raycastY2; // Position of the origine of the raycast to see collider on the y axe for top
+
+    [SerializeField]
     LayerMask m_whatIsWall; // A mask determining what is wall to the character
 
     [SerializeField]
@@ -49,10 +59,16 @@ public class PlayerController : MonoBehaviour {
     ParticleSystem m_speedUpBonusPS; // Particle for the speed up bonus
 
     [SerializeField]
-    ParticleSystem m_speedDownBonusPS; // Particle for the speed down bonus
+    ParticleSystem m_scrollDownBonusPS; // Particle for the scroll down bonus
+
+    [SerializeField]
+    ParticleSystem m_scrollUpBonusPS; // Particle for the scroll up bonus
 
     [SerializeField]
     ParticleSystem m_pointBonusPS; // Particle for the point bonus
+
+    [SerializeField]
+    ParticleSystem m_powerBonusPS; // Particle for the power bonus
 
     [SerializeField]
     int m_multRotationDefault;
@@ -65,7 +81,8 @@ public class PlayerController : MonoBehaviour {
     Transform m_bouleMagikMesh;
     Rigidbody2D m_rigidbody;
     ParticleSystem m_currentSpeedUpParticleSystem;
-    ParticleSystem m_currentSpeedDownParticleSystem;
+    ParticleSystem m_currentScrollDownParticleSystem;
+    ParticleSystem m_currentScrollUpParticleSystem;
     ParticleSystem m_currentPointParticleSystem;
     float m_velocityY;
     bool m_canDoubleJump;
@@ -74,11 +91,12 @@ public class PlayerController : MonoBehaviour {
     public float m_smoothFactor;
     int m_multRotation;
     bool m_isPaused;
+    bool m_isSuperPowerUp;
 
 
     // UNITY METHODES
 
-    
+
     void Start () {
         m_bonusList = new List<BonusApplied>();
         m_rigidbody = GetComponent<Rigidbody2D>();
@@ -93,8 +111,16 @@ public class PlayerController : MonoBehaviour {
     void LateUpdate()
     {
         RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, m_whatIsWall);
-        if (hitX && hitX.distance < 0.5)
-            transform.position = new Vector3(transform.position.x - (0.5f - hitX.distance), transform.position.y, transform.position.z);
+        if (hitX && hitX.distance < 0.6)
+            transform.position = new Vector3(transform.position.x - (0.6f - hitX.distance), transform.position.y, transform.position.z);
+
+        RaycastHit2D hitY = Physics2D.Raycast(m_raycastY.position, Vector3.down, m_whatIsGround);
+        if (hitY && hitY.distance < 0.6 && hitY.distance != 0)
+            transform.position = new Vector3(transform.position.x, transform.position.y + (0.6f - hitY.distance), transform.position.z);
+
+        RaycastHit2D hitY2 = Physics2D.Raycast(m_raycastY2.position, Vector3.up, m_whatIsGround);
+        if (hitY2 && hitY2.distance < 0.6 && hitY2.distance != 0)
+            transform.position = new Vector3(transform.position.x, transform.position.y - (0.6f - hitY2.distance), transform.position.z);
     }
 
 	void Update()
@@ -161,7 +187,7 @@ public class PlayerController : MonoBehaviour {
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began && !EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
             {
-                doJump();
+                DoJump();
             }
         }
 #endif
@@ -179,7 +205,7 @@ public class PlayerController : MonoBehaviour {
         {
             if (m_rigidbody.velocity.y == 0)
             {
-                Debug.Log("Jump");
+                //Debug.Log("Jump");
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_jumpSound);
                 m_rigidbody.AddForce(new Vector2(0, m_velocityY));
@@ -187,7 +213,7 @@ public class PlayerController : MonoBehaviour {
             else
             if (m_rigidbody.velocity.y > -5 && m_canDoubleJump)
             {
-                Debug.Log("Double jump");
+                //Debug.Log("Double jump");
                 m_canDoubleJump = false;
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_jumpSound);
@@ -210,20 +236,31 @@ public class PlayerController : MonoBehaviour {
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_bonusSpeedUpSound);
                 break;
-            case GameManager.e_bonusType.SPEEDDOWN:
-                m_currentSpeedDownParticleSystem = Instantiate(m_speedDownBonusPS, transform.position, m_speedDownBonusPS.transform.rotation) as ParticleSystem;
-                m_currentSpeedDownParticleSystem.transform.parent = gameObject.transform;
+            case GameManager.e_bonusType.SCROLLDOWN:
+                m_currentScrollDownParticleSystem = Instantiate(m_scrollDownBonusPS, new Vector3(transform.position.x, transform.position.y, -1f), m_scrollDownBonusPS.transform.rotation) as ParticleSystem;
+                m_currentScrollDownParticleSystem.transform.parent = gameObject.transform;
                 if (m_speedScroll - 0.2f > m_optionManager.SpeedStart)
                     GameObject.Find("GameManager").GetComponent<GameManager>().UpdateSpeedScroll(-0.2f);
                 if (m_optionManager.Sound == 1)
-                    m_managerAudio.PlayOneShot(m_bonusSpeedDownSound);
+                    m_managerAudio.PlayOneShot(m_bonusScrollDownSound);
+                break;
+            case GameManager.e_bonusType.SCROLLUP:
+                m_currentScrollUpParticleSystem = Instantiate(m_scrollUpBonusPS, new Vector3(transform.position.x, transform.position.y, -1f), m_scrollUpBonusPS.transform.rotation) as ParticleSystem;
+                m_currentScrollUpParticleSystem.transform.parent = gameObject.transform;
+                GameObject.Find("GameManager").GetComponent<GameManager>().UpdateSpeedScroll(0.2f);
+                if (m_optionManager.Sound == 1)
+                    m_managerAudio.PlayOneShot(m_bonusScrollUpSound);
                 break;
             case GameManager.e_bonusType.POINT:
-                m_currentPointParticleSystem = Instantiate(m_pointBonusPS, transform.position, m_pointBonusPS.transform.rotation) as ParticleSystem;
+                m_currentPointParticleSystem = Instantiate(m_pointBonusPS, new Vector3(transform.position.x, transform.position.y, -1f), m_pointBonusPS.transform.rotation) as ParticleSystem;
                 m_currentPointParticleSystem.transform.parent = gameObject.transform;
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_bonusPointSound);
                 GameObject.Find("GameManager").GetComponent<GameManager>().UpdatePoint(3);
+                break;
+            case GameManager.e_bonusType.SUPERPOWER:
+                //m_isSuperPowerUp = true;
+                GameObject.Find("GameManager").GetComponent<GameManager>().ActivateSuperPowerButton();
                 break;
         }
     }
@@ -237,9 +274,13 @@ public class PlayerController : MonoBehaviour {
                 m_multRotation = m_multRotationDefault;
                 m_smoothFactor = m_smoothFactorDefault;
                 break;
-            case GameManager.e_bonusType.SPEEDDOWN:
+            case GameManager.e_bonusType.SCROLLDOWN:
+                break;
+            case GameManager.e_bonusType.SCROLLUP:
                 break;
             case GameManager.e_bonusType.POINT:
+                break;
+            case GameManager.e_bonusType.SUPERPOWER:
                 break;
         }
     }
@@ -247,6 +288,10 @@ public class PlayerController : MonoBehaviour {
 
     // PUBLIC METHODES
 
+    public void SuperPowerUsed()
+    {
+        m_powerBonusPS.Play();
+    }
 
     public void ResetPlayer()
     {
@@ -257,6 +302,13 @@ public class PlayerController : MonoBehaviour {
         m_multRotation = m_multRotationDefault;
         transform.position = m_positionDefault;
         transform.eulerAngles = Vector3.zero;
+        m_bonusList.Clear();
+        if (m_currentSpeedUpParticleSystem != null)
+            Destroy(m_currentSpeedUpParticleSystem.gameObject);
+        if (m_currentScrollDownParticleSystem != null)
+            Destroy(m_currentScrollDownParticleSystem.gameObject);
+        if (m_currentPointParticleSystem != null)
+            Destroy(m_currentPointParticleSystem.gameObject);
     }
 
     public bool Pause
@@ -273,8 +325,8 @@ public class PlayerController : MonoBehaviour {
                 GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
                 if (m_currentSpeedUpParticleSystem != null)
                     m_currentSpeedUpParticleSystem.Pause();
-                if (m_currentSpeedDownParticleSystem != null)
-                    m_currentSpeedDownParticleSystem.Pause();
+                if (m_currentScrollDownParticleSystem != null)
+                    m_currentScrollDownParticleSystem.Pause();
                 if (m_currentPointParticleSystem != null)
                     m_currentPointParticleSystem.Pause();
             }
@@ -283,8 +335,8 @@ public class PlayerController : MonoBehaviour {
                 GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                 if (m_currentSpeedUpParticleSystem != null)
                     m_currentSpeedUpParticleSystem.Play();
-                if (m_currentSpeedDownParticleSystem != null)
-                    m_currentSpeedDownParticleSystem.Play();
+                if (m_currentScrollDownParticleSystem != null)
+                    m_currentScrollDownParticleSystem.Play();
                 if (m_currentPointParticleSystem != null)
                     m_currentPointParticleSystem.Play();
             }

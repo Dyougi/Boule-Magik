@@ -36,29 +36,31 @@ public class MenuManager : MonoBehaviour {
     GameObject m_menuOption;
 
     [SerializeField]
+    GameObject m_menuCredit;
+
+    [SerializeField]
     Button m_defaultValueButton;
 
     OptionManager m_optionManager;
-    int m_hightScore;
 
     public enum e_sliderType { SPEEDSTART, SPEEDUPDATE };
     public enum e_toggleType { MUSIC, SOUND };
+    public enum e_menuType { MAINMENU, OPTIONS, CREDIT };
 
     AudioSource m_audioSource;
-    static float m_speedStartDefaultValue = 4;
-    static float m_speedUpdateDefaultValue = 0.05f;
-    bool m_isOption;
+    const float m_speedStartDefaultValue = 4;
+    const float m_speedUpdateDefaultValue = 0.1f;
     float m_scorePrinted;
     float m_speedPrinted;
+    e_menuType m_lastMenu;
 
     void Start()
     {
-        m_isOption = false;
         m_audioSource = GetComponent<AudioSource>();
         m_optionManager = OptionManager.Instance;
-        m_hightScore = PlayerPrefs.GetInt("score");
         m_scorePrinted = -1;
         m_speedPrinted = -1;
+        m_lastMenu = e_menuType.MAINMENU;
     }
 
     void Update()
@@ -84,20 +86,32 @@ public class MenuManager : MonoBehaviour {
         SceneManager.LoadScene("MainScene");
     }
 
-    public void SwitchMenu()
+    public void SwitchMenu(int menuType)
     {
-        if (m_isOption) // Main menu
+        switch ((e_menuType)menuType)
         {
-            m_optionManager.saveOption();
-            m_menuStart.SetActive(true);
-            m_menuOption.SetActive(false);
-            m_isOption = false;
-        }
-        else // Option menu
-        {
-            m_menuStart.SetActive(false);
-            m_menuOption.SetActive(true);
-            m_isOption = true;
+            case e_menuType.MAINMENU:
+                m_menuStart.SetActive(true);
+                if (m_lastMenu == e_menuType.OPTIONS)
+                {
+                    m_menuOption.SetActive(false);
+                    m_optionManager.saveOption();
+                }
+                if (m_lastMenu == e_menuType.CREDIT)
+                {
+                    m_menuCredit.SetActive(false);
+                }
+                break;
+            case e_menuType.OPTIONS:
+                m_menuStart.SetActive(false);
+                m_menuOption.SetActive(true);
+                m_lastMenu = e_menuType.OPTIONS;
+                break;
+            case e_menuType.CREDIT:
+                m_menuStart.SetActive(false);
+                m_menuCredit.SetActive(true);
+                m_lastMenu = e_menuType.CREDIT;
+                break;
         }
     }
 
