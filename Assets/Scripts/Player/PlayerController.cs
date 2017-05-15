@@ -112,11 +112,17 @@ public class PlayerController : MonoBehaviour {
     {
         RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, m_whatIsWall);
         if (hitX && hitX.distance < 0.6)
+        {
             transform.position = new Vector3(transform.position.x - (0.6f - hitX.distance), transform.position.y, transform.position.z);
+            return;
+        }
 
         RaycastHit2D hitY = Physics2D.Raycast(m_raycastY.position, Vector3.down, m_whatIsGround);
         if (hitY && hitY.distance < 0.6 && hitY.distance != 0)
+        {
             transform.position = new Vector3(transform.position.x, transform.position.y + (0.6f - hitY.distance), transform.position.z);
+            return;
+        }
 
         RaycastHit2D hitY2 = Physics2D.Raycast(m_raycastY2.position, Vector3.up, m_whatIsGround);
         if (hitY2 && hitY2.distance < 0.6 && hitY2.distance != 0)
@@ -259,7 +265,7 @@ public class PlayerController : MonoBehaviour {
                 GameObject.Find("GameManager").GetComponent<GameManager>().UpdatePoint(3);
                 break;
             case GameManager.e_bonusType.SUPERPOWER:
-                //m_isSuperPowerUp = true;
+                m_isSuperPowerUp = true;
                 GameObject.Find("GameManager").GetComponent<GameManager>().ActivateSuperPowerButton();
                 break;
         }
@@ -290,6 +296,7 @@ public class PlayerController : MonoBehaviour {
 
     public void SuperPowerUsed()
     {
+        m_isSuperPowerUp = false;
         m_powerBonusPS.Play();
     }
 
@@ -355,6 +362,14 @@ public class PlayerController : MonoBehaviour {
         set
         {
             m_speedScroll = value;
+        }
+    }
+
+    public bool IsSuperPowerUp
+    {
+        get
+        {
+            return m_isSuperPowerUp;
         }
     }
 }

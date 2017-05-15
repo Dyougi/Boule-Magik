@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -45,6 +45,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     Text m_uiSpeed; // the Text from the GUI to show points
+
+    [SerializeField]
+    Text m_uiRestart; // the Text from the GUI to show counter when restart after background
 
     [SerializeField]
     AudioSource m_musicManager; // audio source for music
@@ -90,7 +93,6 @@ public class GameManager : MonoBehaviour
     bool m_isPaused; // is game paused ?
     bool m_isLose; // is the game lost ?
     float m_timeWhenLose; // the moment the player lost
-    bool m_isSuperPowerUp;
 
     // UNITY METHODES
 
@@ -104,6 +106,22 @@ public class GameManager : MonoBehaviour
         m_startSpeedScroll = m_optionManager.SpeedStart;
         //m_updateSpeedScroll = m_optionManager.Speedupdate;
         InitGame();
+    }
+
+    void OnApplicationFocus(bool pauseStatus)
+    {
+        if (pauseStatus)
+        {
+            m_uiRestart.gameObject.SetActive(true);
+            StartCoroutine(RestartAfterbackground());
+        }
+        else
+        {
+            if (m_player.GetComponent<PlayerController>().IsSuperPowerUp)
+                DesactivateSuperPowerButton();
+            m_pauseButton.SetActive(false);
+            UpdatePause(true);
+        }
     }
 
     void Update()
@@ -134,6 +152,23 @@ public class GameManager : MonoBehaviour
     }
 
     // PRIVATE METHODES
+
+    IEnumerator RestartAfterbackground()
+    {
+        for (float count = 4f; count > 1; count -= Time.deltaTime)
+        {
+            if (count.ToString("0") == "4")
+                m_uiRestart.text = "3";
+            else
+                m_uiRestart.text = count.ToString("0");
+            yield return null;
+        }
+        if (m_player.GetComponent<PlayerController>().IsSuperPowerUp)
+            ActivateSuperPowerButton();
+        m_uiRestart.gameObject.SetActive(false);
+        m_pauseButton.SetActive(true);
+        UpdatePause(false);
+    }
 
     void InitGame()
     {
@@ -208,6 +243,13 @@ public class GameManager : MonoBehaviour
                         item["Bonus"].speed = 1;
                 }
             }
+        if (m_optionManager.Music == 1)
+        {
+            if (m_musicManager.isPlaying)
+                m_musicManager.Pause();
+            else
+                m_musicManager.UnPause();
+        }
         m_player.GetComponent<PlayerController>().Pause = pause;
         m_firstBackground.GetComponent<ScrollingEntity>().Pause = pause;
         m_secondBackground.GetComponent<ScrollingEntity>().Pause = pause;
@@ -220,13 +262,6 @@ public class GameManager : MonoBehaviour
     public void PauseButtonPressed(Image buttonImage)
     {
         buttonImage.sprite = m_isPaused == false ? m_playSprite : m_pauseSprite;
-        if (m_optionManager.Music == 1)
-        {
-            if (m_isPaused == true)
-                m_musicManager.UnPause();
-            else
-                m_musicManager.Pause();
-        }
         UpdatePause(!m_isPaused);
     }
 
@@ -257,6 +292,7 @@ public class GameManager : MonoBehaviour
 
     public void Lose()
     {
+        DesactivateSuperPowerButton();
         if (PlayerPrefs.GetInt("pointScore") < m_points)
         {
             m_optionManager.Score = m_points;
@@ -291,12 +327,15 @@ public class GameManager : MonoBehaviour
             Destroy(obj);
         m_player.GetComponent<PlayerController>().ResetPlayer();
         InitGame();
-        if (m_optionManager.Music == 1)
-            m_musicManager.Play();
         UpdatePause(false);
         m_retryButton.SetActive(false);
         m_menuButton.SetActive(false);
         m_pauseButton.SetActive(true);
+        if (m_optionManager.Music == 1)
+        {
+            m_musicManager.Stop();
+            m_musicManager.Play();
+        }
     }
 
     public void GoMenu()
