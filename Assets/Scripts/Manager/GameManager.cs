@@ -93,6 +93,7 @@ public class GameManager : MonoBehaviour
     bool m_isPaused; // is game paused ?
     bool m_isLose; // is the game lost ?
     float m_timeWhenLose; // the moment the player lost
+    bool m_haveToRestartAfterBackground;
 
     // UNITY METHODES
 
@@ -112,15 +113,23 @@ public class GameManager : MonoBehaviour
     {
         if (pauseStatus)
         {
-            m_uiRestart.gameObject.SetActive(true);
-            StartCoroutine(RestartAfterbackground());
+            if (m_haveToRestartAfterBackground)
+            {
+                m_uiRestart.gameObject.SetActive(true);
+                StartCoroutine(RestartAfterbackground());
+                m_haveToRestartAfterBackground = false;
+            }
         }
         else
         {
-            if (m_player.GetComponent<PlayerController>().IsSuperPowerUp)
-                DesactivateSuperPowerButton();
-            m_pauseButton.SetActive(false);
-            UpdatePause(true);
+            if (!m_isPaused && !m_isLose)
+            {
+                if (m_player.GetComponent<PlayerController>().IsSuperPowerUp)
+                    DesactivateSuperPowerButton();
+                m_pauseButton.SetActive(false);
+                UpdatePause(true);
+                m_haveToRestartAfterBackground = true;
+            }
         }
     }
 
@@ -190,6 +199,7 @@ public class GameManager : MonoBehaviour
         Color tempColor = new Color(tempImage.color.r, tempImage.color.g, tempImage.color.b, 50);
         m_superPowerButton.GetComponent<Image>().color = tempColor;*/
         DesactivateSuperPowerButton();
+        m_haveToRestartAfterBackground = false;
     }
 
     // PUBLIC METHODES

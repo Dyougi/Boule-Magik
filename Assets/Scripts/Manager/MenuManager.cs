@@ -41,6 +41,12 @@ public class MenuManager : MonoBehaviour {
     [SerializeField]
     Button m_defaultValueButton;
 
+    [SerializeField]
+    AudioSource m_soundManager;
+
+    [SerializeField]
+    AudioClip m_buttonSound;
+
     OptionManager m_optionManager;
 
     public enum e_sliderType { SPEEDSTART, SPEEDUPDATE };
@@ -83,11 +89,15 @@ public class MenuManager : MonoBehaviour {
 
     public void LaunchGame()
     {
+        if (m_optionManager.Sound == 1)
+            m_soundManager.PlayOneShot(m_buttonSound);
         SceneManager.LoadScene("MainScene");
     }
 
     public void SwitchMenu(int menuType)
     {
+        if (m_optionManager.Sound == 1)
+            m_soundManager.PlayOneShot(m_buttonSound);
         switch ((e_menuType)menuType)
         {
             case e_menuType.MAINMENU:

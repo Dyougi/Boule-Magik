@@ -20,6 +20,12 @@ public class PlayerController : MonoBehaviour {
     AudioClip m_bonusPointSound; // bonus point sound !
 
     [SerializeField]
+    AudioClip m_bonusSuperPowerSound; // bonus super power sound !
+
+    [SerializeField]
+    AudioClip m_bonusSuperPowerActivatedSound; // bonus super power sound when used !
+
+    [SerializeField]
     float m_startVelocityY; // the start velocity for y axe (jump)
 
     [SerializeField]
@@ -266,6 +272,8 @@ public class PlayerController : MonoBehaviour {
                 break;
             case GameManager.e_bonusType.SUPERPOWER:
                 m_isSuperPowerUp = true;
+                if (m_optionManager.Sound == 1)
+                    m_managerAudio.PlayOneShot(m_bonusSuperPowerSound);
                 GameObject.Find("GameManager").GetComponent<GameManager>().ActivateSuperPowerButton();
                 break;
         }
@@ -296,6 +304,8 @@ public class PlayerController : MonoBehaviour {
 
     public void SuperPowerUsed()
     {
+        if (m_optionManager.Sound == 1)
+            m_managerAudio.PlayOneShot(m_bonusSuperPowerActivatedSound);
         m_isSuperPowerUp = false;
         m_powerBonusPS.Play();
     }
