@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System.IO;
 
 public class PlayerController : MonoBehaviour {
 
@@ -116,23 +117,49 @@ public class PlayerController : MonoBehaviour {
 
     void LateUpdate()
     {
-        RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, m_whatIsWall);
+        RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, 0.7f, m_whatIsWall);
         if (hitX && hitX.distance < 0.6)
         {
+#if UNITY_EDITOR
+            LogManager.LogMessageToFile("hitX.distance     :\t" + hitX.distance);
+            LogManager.LogMessageToFile("hitX.point        :\t" + hitX.point);
+            LogManager.LogMessageToFile("pos player before :\t" + transform.position.ToString());
+#endif
             transform.position = new Vector3(transform.position.x - (0.6f - hitX.distance), transform.position.y, transform.position.z);
+#if UNITY_EDITOR
+            LogManager.LogMessageToFile("pos player after  :\t" + transform.position.ToString() + "\n");
+#endif
             return;
         }
 
-        RaycastHit2D hitY = Physics2D.Raycast(m_raycastY.position, Vector3.down, m_whatIsGround);
+        RaycastHit2D hitY = Physics2D.Raycast(m_raycastY.position, Vector3.down, 0.7f, m_whatIsGround);
         if (hitY && hitY.distance < 0.6 && hitY.distance != 0)
         {
+#if UNITY_EDITOR
+            LogManager.LogMessageToFile("hitY.distance     :\t" + hitY.distance);
+            LogManager.LogMessageToFile("hitY.point        :\t" + hitY.point);
+            LogManager.LogMessageToFile("pos player before :\t" + transform.position.ToString());
+#endif
             transform.position = new Vector3(transform.position.x, transform.position.y + (0.6f - hitY.distance), transform.position.z);
+#if UNITY_EDITOR
+            LogManager.LogMessageToFile("pos player after  :\t" + transform.position.ToString() + "\n");
+#endif
             return;
         }
 
-        RaycastHit2D hitY2 = Physics2D.Raycast(m_raycastY2.position, Vector3.up, m_whatIsGround);
+        RaycastHit2D hitY2 = Physics2D.Raycast(m_raycastY2.position, Vector3.up, 0.7f, m_whatIsGround);
         if (hitY2 && hitY2.distance < 0.6 && hitY2.distance != 0)
+        {
+#if UNITY_EDITOR
+            LogManager.LogMessageToFile("hitY2.distance    :\t" + hitY2.distance);
+            LogManager.LogMessageToFile("hitY2.point       :\t" + hitY2.point);
+            LogManager.LogMessageToFile("pos player before :\t" + transform.position.ToString());
+#endif
             transform.position = new Vector3(transform.position.x, transform.position.y - (0.6f - hitY2.distance), transform.position.z);
+#if UNITY_EDITOR
+            LogManager.LogMessageToFile("pos player after  :\t" + transform.position.ToString() + "\n");
+#endif
+        }
     }
 
 	void Update()
@@ -326,6 +353,7 @@ public class PlayerController : MonoBehaviour {
             Destroy(m_currentScrollDownParticleSystem.gameObject);
         if (m_currentPointParticleSystem != null)
             Destroy(m_currentPointParticleSystem.gameObject);
+        m_isSuperPowerUp = false;
     }
 
     public bool Pause

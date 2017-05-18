@@ -181,6 +181,9 @@ public class GameManager : MonoBehaviour
 
     void InitGame()
     {
+#if UNITY_EDITOR
+        LogManager.LogFileClean();
+#endif
         m_countTab = 0; // tab platform count;
         m_isPaused = false; // game paused ?
         m_isLose = false; // lose state
