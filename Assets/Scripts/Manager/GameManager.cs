@@ -108,7 +108,8 @@ public class GameManager : MonoBehaviour
         //m_updateSpeedScroll = m_optionManager.Speedupdate;
         InitGame();
     }
-
+/*
+#if UNITY_ANDROID
     void OnApplicationFocus(bool pauseStatus)
     {
         if (pauseStatus)
@@ -132,6 +133,8 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+#endif
+*/
 
     void Update()
     {

@@ -5,6 +5,8 @@ using System.IO;
 
 public class PlayerController : MonoBehaviour {
 
+    const float m_gravity = 5;
+
     [SerializeField]
     AudioClip m_jumpSound; // jump sound !
 
@@ -99,6 +101,8 @@ public class PlayerController : MonoBehaviour {
     int m_multRotation;
     bool m_isPaused;
     bool m_isSuperPowerUp;
+    bool m_isGrounded;
+    float m_yVelocity;
 
 
     // UNITY METHODES
@@ -117,48 +121,24 @@ public class PlayerController : MonoBehaviour {
 
     void LateUpdate()
     {
-        RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, 0.7f, m_whatIsWall);
-        if (hitX && hitX.distance < 0.6)
+        RaycastHit2D hitX = Physics2D.Raycast(m_raycastX.position, Vector3.right, 1, m_whatIsWall);
+        if (hitX && hitX.distance < 0.9f)
         {
-#if UNITY_EDITOR
-            LogManager.LogMessageToFile("hitX.distance     :\t" + hitX.distance);
-            LogManager.LogMessageToFile("hitX.point        :\t" + hitX.point);
-            LogManager.LogMessageToFile("pos player before :\t" + transform.position.ToString());
-#endif
-            transform.position = new Vector3(transform.position.x - (0.6f - hitX.distance), transform.position.y, transform.position.z);
-#if UNITY_EDITOR
-            LogManager.LogMessageToFile("pos player after  :\t" + transform.position.ToString() + "\n");
-#endif
+            transform.position = new Vector3(transform.position.x - (0.9f - hitX.distance), transform.position.y, transform.position.z);
             return;
         }
-
-        RaycastHit2D hitY = Physics2D.Raycast(m_raycastY.position, Vector3.down, 0.7f, m_whatIsGround);
-        if (hitY && hitY.distance < 0.6 && hitY.distance != 0)
+        
+        RaycastHit2D hitY = Physics2D.Raycast(m_raycastY.position, Vector3.down, 1, m_whatIsGround);
+        if (hitY && hitY.distance < 0.9f)// && hitY.distance != 0)
         {
-#if UNITY_EDITOR
-            LogManager.LogMessageToFile("hitY.distance     :\t" + hitY.distance);
-            LogManager.LogMessageToFile("hitY.point        :\t" + hitY.point);
-            LogManager.LogMessageToFile("pos player before :\t" + transform.position.ToString());
-#endif
-            transform.position = new Vector3(transform.position.x, transform.position.y + (0.6f - hitY.distance), transform.position.z);
-#if UNITY_EDITOR
-            LogManager.LogMessageToFile("pos player after  :\t" + transform.position.ToString() + "\n");
-#endif
+            transform.position = new Vector3(transform.position.x, transform.position.y + (0.9f - hitY.distance), transform.position.z);
             return;
         }
-
-        RaycastHit2D hitY2 = Physics2D.Raycast(m_raycastY2.position, Vector3.up, 0.7f, m_whatIsGround);
-        if (hitY2 && hitY2.distance < 0.6 && hitY2.distance != 0)
+        
+        RaycastHit2D hitY2 = Physics2D.Raycast(m_raycastY2.position, Vector3.up, 1, m_whatIsGround);
+        if (hitY2 && hitY2.distance < 0.9f)// && hitY2.distance != 0)
         {
-#if UNITY_EDITOR
-            LogManager.LogMessageToFile("hitY2.distance    :\t" + hitY2.distance);
-            LogManager.LogMessageToFile("hitY2.point       :\t" + hitY2.point);
-            LogManager.LogMessageToFile("pos player before :\t" + transform.position.ToString());
-#endif
-            transform.position = new Vector3(transform.position.x, transform.position.y - (0.6f - hitY2.distance), transform.position.z);
-#if UNITY_EDITOR
-            LogManager.LogMessageToFile("pos player after  :\t" + transform.position.ToString() + "\n");
-#endif
+            transform.position = new Vector3(transform.position.x, transform.position.y - (0.9f - hitY2.distance), transform.position.z);
         }
     }
 
@@ -169,13 +149,14 @@ public class PlayerController : MonoBehaviour {
             ManageInputs();
 
             // Manage double jump conditions
+
             if (m_canDoubleJump == false && CheckIfNear(m_groundCheck.position, m_whatIsGround, 0.1f))
                 m_canDoubleJump = true;
 
             // Manage the movement and rotation of the player
-            if (!CheckIfNear(m_wallCheck.position, m_whatIsWall, 0.1f) && transform.position.x < m_playerLimit.position.x)
+            if (!CheckIfNear(m_wallCheck.position, m_whatIsWall, 0.1f))
             {
-                transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);
+                //transform.position = Vector3.Lerp(transform.position, m_playerLimit.position, Time.deltaTime * m_smoothFactor);)
                 m_bouleMagikMesh.Rotate(new Vector3(0, 0, -(m_multRotation * m_speedScroll * Time.deltaTime)));
             }
 
@@ -188,6 +169,10 @@ public class PlayerController : MonoBehaviour {
                     m_bonusList.Remove(item);
                 }
             }
+            // apply gravity
+            transform.position = new Vector3(transform.position.x, transform.position.y - m_gravity * Time.deltaTime, transform.position.z);
+            if (CheckIfNear(m_groundCheck.position, m_whatIsGround, 0.1f))
+                m_isGrounded = true;
         }
     }
 
@@ -211,7 +196,7 @@ public class PlayerController : MonoBehaviour {
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(position, range, whatIs);
         for (int i = 0; i < colliders.Length; i++)
-            if (colliders[i].gameObject != gameObject && transform.position.x < m_playerLimit.position.x)
+            if (colliders[i].gameObject != gameObject)
                 return true;
         return false;
     }
@@ -244,20 +229,22 @@ public class PlayerController : MonoBehaviour {
         {
             if (m_rigidbody.velocity.y == 0)
             {
-                //Debug.Log("Jump");
+                Debug.Log("Jump");
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_jumpSound);
-                m_rigidbody.AddForce(new Vector2(0, m_velocityY));
+                //m_rigidbody.AddForce(new Vector2(0, m_velocityY));
+                m_yVelocity = 10;
             }
             else
             if (m_rigidbody.velocity.y > -5 && m_canDoubleJump)
             {
-                //Debug.Log("Double jump");
+                Debug.Log("Double jump");
                 m_canDoubleJump = false;
                 if (m_optionManager.Sound == 1)
                     m_managerAudio.PlayOneShot(m_jumpSound);
-                m_rigidbody.velocity = Vector2.zero;
-                m_rigidbody.AddForce(new Vector2(0, m_velocityY + 50));
+                //m_rigidbody.velocity = Vector2.zero;
+                //m_rigidbody.AddForce(new Vector2(0, m_velocityY + 50));
+                m_yVelocity = 15;
             }
         }
     }
@@ -354,6 +341,8 @@ public class PlayerController : MonoBehaviour {
         if (m_currentPointParticleSystem != null)
             Destroy(m_currentPointParticleSystem.gameObject);
         m_isSuperPowerUp = false;
+        m_isGrounded = false;
+        m_yVelocity = 0;
     }
 
     public bool Pause
